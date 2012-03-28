@@ -1,0 +1,117 @@
+﻿@model WKSADB.Tournament
+
+@{
+    ViewBag.Title = "Create Tournament";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Create Tournament</h2>
+
+<script type="text/javascript" src="@Url.Content("~/Scripts/jquery.validate.min.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/additional-methods.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jQuery.dualListBox-1.3.js")"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.date').datepicker({ dateFormat: "dd/mm/yy" });
+        $.configureBoxes({
+            box2View: 'SelectedDivisionIds',
+            sortBy: 'attr',
+            useFilters: false
+        });
+
+        addVenue = function (data) {
+            $('#VenueId')
+                 .append($("<option></option>")
+                 .attr("value", data.venueId)
+                 .text(data.venueName));
+
+            $('#VenueId').val(data.venueId);
+
+            $('#popupDialog').dialog('close');
+        };
+        
+        $("#addVenueLink").data("dialog-callback", addVenue);        
+
+        initDialogs(['#addVenueLink']);
+    });
+</script>
+
+@using (Html.BeginForm()) {
+    @Html.ValidationSummary(true)
+
+    <fieldset>
+        <legend>Tournament</legend>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.TournamentName, "Tournament Name")
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.TournamentName)
+            @Html.ValidationMessageFor(model => model.TournamentName, "The Tournament Name field is required.")
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.VenueId, "Venue")
+        </div>
+        <div class="editor-field">
+            @Html.DropDownListFor(model => model.VenueId, (SelectList)ViewBag.VenueId, String.Empty)
+            @Html.ActionLink("Add New Venue", "Create", "Venue", routeValues: null, htmlAttributes: new { id = "addVenueLink", data_dialog_title = "Add New Venue" })
+            @Html.ValidationMessageFor(model => model.VenueId)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.StartDate, "Start Date")
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.StartDate)
+            @Html.ValidationMessageFor(model => model.StartDate, "The Start Date field is required.")
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.EndDate, "End Date")
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.EndDate)
+            @Html.ValidationMessageFor(model => model.EndDate, "The End Date field is required.")
+        </div>
+
+        <div class="editor-label">
+            <label>Divisions</label>
+            @Html.ValidationMessageFor(model => model.SelectedDivisionIds, "Please select at least one division.")
+        </div>
+        <div class="eventSelector">
+            <div class="eventBox">
+                <select id="box1View" multiple="multiple">
+                    @{int sortOrder = 1;}
+                    @foreach (WKSADB.Division division in ViewBag.DivisionList)
+                    {
+                        <option value="@division.DivisionId" sortOrder="@sortOrder">@division.DivisionName</option>
+                        sortOrder++;
+                    }
+                </select>
+
+                <span id="box1Counter" class="countLabel"></span>
+
+            </div>
+
+            <div class="controls">
+                <button id="to1" type="button"><</button>
+                <button id="to2" type="button">></button>
+            </div>
+
+            <div class="eventBox">
+                @Html.ListBoxFor(model => model.SelectedDivisionIds, new List<SelectListItem>())
+                <span id="box2Counter" class="countLabel"></span>
+            </div>
+        </div>
+
+        <p style="float:left;clear:left;">
+            <input type="submit" value="Create" />
+        </p>
+    </fieldset>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>

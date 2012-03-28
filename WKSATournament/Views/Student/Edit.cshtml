@@ -1,0 +1,156 @@
+﻿@model WKSADB.Student
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>Edit</h2>
+
+<script src="@Url.Content("~/Scripts/jquery.validate.min.js")"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")"></script>
+
+@using (Html.BeginForm()) {
+    @Html.ValidationSummary(true)
+
+    <fieldset>
+        <legend>Student</legend>
+
+        @Html.HiddenFor(model => model.StudentId)
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.WKSAId)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.WKSAId)
+            @Html.ValidationMessageFor(model => model.WKSAId)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.BlackBeltId)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.BlackBeltId)
+            @Html.ValidationMessageFor(model => model.BlackBeltId)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.FirstName)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.FirstName)
+            @Html.ValidationMessageFor(model => model.FirstName)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.LastName)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.LastName)
+            @Html.ValidationMessageFor(model => model.LastName)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.DateOfBirth)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.DateOfBirth)
+            @Html.ValidationMessageFor(model => model.DateOfBirth)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Address1)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Address1)
+            @Html.ValidationMessageFor(model => model.Address1)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Address2)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Address2)
+            @Html.ValidationMessageFor(model => model.Address2)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Address3)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Address3)
+            @Html.ValidationMessageFor(model => model.Address3)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Address4)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Address4)
+            @Html.ValidationMessageFor(model => model.Address4)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Address5)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Address5)
+            @Html.ValidationMessageFor(model => model.Address5)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Postcode)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Postcode)
+            @Html.ValidationMessageFor(model => model.Postcode)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.CountryId, "Country")
+        </div>
+        <div class="editor-field">
+            @Html.DropDownList("CountryId", String.Empty)
+            @Html.ValidationMessageFor(model => model.CountryId)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.RankId, "Rank")
+        </div>
+        <div class="editor-field">
+            @Html.DropDownList("RankId", String.Empty)
+            @Html.ValidationMessageFor(model => model.RankId)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Gender)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Gender)
+            @Html.ValidationMessageFor(model => model.Gender)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.SchoolId, "School")
+        </div>
+        <div class="editor-field">
+            @Html.DropDownList("SchoolId", String.Empty)
+            @Html.ValidationMessageFor(model => model.SchoolId)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.IsSchoolOwner)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.IsSchoolOwner)
+            @Html.ValidationMessageFor(model => model.IsSchoolOwner)
+        </div>
+
+        <p>
+            <input type="submit" value="Save" />
+        </p>
+    </fieldset>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>

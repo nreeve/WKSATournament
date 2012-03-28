@@ -1,0 +1,189 @@
+﻿@model WKSADB.Competitor
+
+@using WKSADB
+
+@{
+    ViewBag.Title = "Add Competitor";
+}
+
+<h2>Add Competitor</h2>
+
+<script src="@Url.Content("~/Scripts/jquery.validate.min.js")"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")"></script>
+<script type="text/javascript">
+    var tournamentId = @ViewBag.TournamentId;
+    var tournamentStartDate = new Date("@ViewBag.TournamentStartDate");
+
+    function detailsEntered() {
+        if ($("#Age").val()=="" || $("#RankId").val()=="" || $("#Gender").val()=="") {
+            return false;
+        }
+
+        return true;
+    }
+
+    $(document).ready(function () {
+        $('.date').datepicker({
+            changeYear: true,
+            changeMonth: true,
+            yearRange: "1900",
+            dateFormat: "dd/mm/yy",
+            onClose: function(){
+                dateOfBirth = $('#DateOfBirth').datepicker("getDate");
+
+                age = ((tournamentStartDate.getMonth() > dateOfBirth.getMonth()) || (tournamentStartDate.getMonth() == dateOfBirth.getMonth() && tournamentStartDate.getDate() >= dateOfBirth.getDate())) ? tournamentStartDate.getFullYear() - dateOfBirth.getFullYear() : tournamentStartDate.getFullYear() - dateOfBirth.getFullYear()-1;
+
+                $("#Age").val(age);
+            }
+        });
+
+        $('#divisions input[type=checkbox]').click(function () {
+            var divisionTypeId = $(this).val();
+
+            if ($(this).attr("checked")) {
+                // Check if the required fields for query are entered
+                if (detailsEntered()) {
+                    $.ajax(
+                    {
+                        type: "GET",
+                        url: "/Division/GetDivision",
+                        data:
+                        {
+                            tournamentId: tournamentId,
+                            divisionTypeId: divisionTypeId,
+                            age: $("#Age").val(),
+                            rankId: $("#RankId").val(),
+                            gender: $("#Gender").val()
+                        },
+                        success: function (data) {
+                            if(data.ErrorMessage){
+                                alert(data.ErrorMessage);
+                                $("#divisionTypeCheckbox" + divisionTypeId).attr("checked", false);
+                            }else{
+                                $("#divisionName" + divisionTypeId).text(data.DivisionName);
+                                $("#divisionName" + divisionTypeId).css("font-weight", "bold");
+                                $("#divisionName" + divisionTypeId).css("font-style", "normal");
+                                $("#divisionName" + divisionTypeId).effect("highlight", {}, 3000);
+                            }
+                        },
+                        error: function (req, status, error) {
+                            alert("Error: " + req.responseText);
+                            $("#divisionTypeCheckbox" + divisionTypeId).attr("checked", false);
+                        }
+                    });
+                } else {
+                    alert("Please enter: Age, Rank and Gender");
+                    event.preventDefault();
+                }
+            } else {
+                // Remove division if already selected. Not allowed if results entered
+                $("#divisionName" + divisionTypeId).text("Check box to select division");
+                $("#divisionName" + divisionTypeId).css("font-weight", "normal");
+                $("#divisionName" + divisionTypeId).css("font-style", "italic");
+            }
+        });
+    });
+</script>
+
+@using (Html.BeginForm()) {
+    <section style="width:600px;float:left;">
+        <fieldset>
+            <legend>Competitor Details</legend>
+
+            <div class="row">
+                <div>
+                    @Html.LabelFor(model => model.WKSAId)
+                    @Html.TextBoxFor(model => model.WKSAId, new { style = "width:100px" })
+                </div>
+
+                <div>
+                    @Html.LabelFor(model => model.BlackBeltId)
+                    @Html.TextBoxFor(model => model.BlackBeltId, new { style = "width:100px" })
+                </div>
+
+                <div>
+                    @Html.LabelFor(model => model.SchoolId, "School")
+                    @Html.DropDownListFor(model => model.SchoolId, (SelectList)ViewBag.SchoolId, String.Empty)
+                </div>
+
+                <div>
+                    @Html.LabelFor(model => model.Fee)
+                    @Html.TextBoxFor(model => model.Fee, new { style = "width:100px" })
+                </div>
+            </div>
+
+            <div class="row">
+                <div>
+                    @Html.LabelFor(model => model.FirstName)
+                    @Html.TextBoxFor(model => model.FirstName, new { style = "width:180px" })
+                </div>
+
+                <div>
+                    @Html.LabelFor(model => model.LastName)
+                    @Html.TextBoxFor(model => model.LastName, new { style = "width:180px" })
+                </div>
+
+                <div>
+                    @Html.LabelFor(model => model.RankId, "Rank")
+                    @Html.DropDownListFor(model => model.RankId, (SelectList)ViewBag.RankId, String.Empty)
+                </div>
+            </div>
+
+            <div class="row">
+                <div>
+                    @Html.LabelFor(model => model.DateOfBirth)
+                    @Html.EditorFor(model => model.DateOfBirth, new { style = "width:100px" })
+                </div>
+
+                <div>
+                    @Html.Label("Age (at Tournament)")
+                    @Html.TextBox("Age", string.Empty, new { style = "width:100px" })
+                </div>
+
+                <div style="margin-top:29px;">
+                    @Html.Label("Male", new { style = "float:left" })
+                    @Html.RadioButtonFor(model => model.Gender, "M", new { style = "float:left" })
+                    @Html.Label("Female", new { style = "float:left; margin-left:20px;" })
+                    @Html.RadioButtonFor(model => model.Gender, "F", new { style = "float:left" })
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>Divisions</legend>
+
+            <div id="divisions" class="row">
+                <h3>DIVISIONS</h3>
+                <table style="width:600px;">
+                    <thead>
+                        <tr>
+                            <th style="width:100px;">&nbsp;</th>
+                            <th style="width:50px;">&nbsp;</th>
+                            <th>&nbsp;</th>
+                            <th style="width:100px;">Pts.</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (DivisionType divisionType in ViewBag.DivisionTypes){
+                    <tr>
+                        <td>@divisionType.Description</td>
+                        <td><input type="checkbox" id="divisionTypeCheckbox@(divisionType.DivisionTypeId)" name="divisionTypeCheckbox@(divisionType.DivisionTypeId)" style="float:left;" value="@divisionType.DivisionTypeId" /></td>
+                        <td><span id="divisionName@(divisionType.DivisionTypeId)">Check box to select division</span></td>
+                        <td align="center"><input type="text" style="width:20px;" /></td>
+                    </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+            <p style="float:left;">
+                <input type="submit" value="Create" />
+            </p>
+        </fieldset>
+        <div>
+            @Html.ActionLink("Back to List", "Index")
+        </div>
+    </section>
+    <section style="float:left;">
+        @Html.ValidationSummary("The following errors have occurred:")
+    </section>
+}

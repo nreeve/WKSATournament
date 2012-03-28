@@ -1,0 +1,52 @@
+﻿@model WKSADB.Competitor
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>Edit</h2>
+
+<script src="@Url.Content("~/Scripts/jquery.validate.min.js")"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")"></script>
+
+@using (Html.BeginForm()) {
+    @Html.ValidationSummary(true)
+
+    <fieldset>
+        <legend>Competitor</legend>
+
+        @Html.HiddenFor(model => model.CompetitorId)
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.TournamentId, "Tournament")
+        </div>
+        <div class="editor-field">
+            @Html.DropDownList("TournamentId", String.Empty)
+            @Html.ValidationMessageFor(model => model.TournamentId)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.StudentId, "Student")
+        </div>
+        <div class="editor-field">
+            @Html.DropDownList("StudentId", String.Empty)
+            @Html.ValidationMessageFor(model => model.StudentId)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Fee)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Fee)
+            @Html.ValidationMessageFor(model => model.Fee)
+        </div>
+
+        <p>
+            <input type="submit" value="Save" />
+        </p>
+    </fieldset>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>

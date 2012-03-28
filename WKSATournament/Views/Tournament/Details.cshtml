@@ -1,0 +1,14 @@
+﻿@model WKSADB.Tournament
+
+@{
+    ViewBag.Title = Model.TournamentName;
+}
+
+<h2>@string.Format("{0} - {1} ({2} - {3})", Model.TournamentName, Model.Venue.VenueName, Model.StartDate.ToShortDateString(), Model.EndDate.ToShortDateString())</h2>
+
+<h3>Competitors</h3>
+<p>@Html.ActionLink("Add Competitor", "Create", "Competitor", new { tournamentId = Model.TournamentId}, null)</p>
+<p>
+    @Html.ActionLink("Edit Settings", "Edit", new { id=Model.TournamentId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

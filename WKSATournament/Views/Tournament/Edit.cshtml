@@ -1,0 +1,60 @@
+﻿@model WKSADB.Tournament
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>Edit</h2>
+
+<script src="@Url.Content("~/Scripts/jquery.validate.min.js")"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")"></script>
+
+@using (Html.BeginForm()) {
+    @Html.ValidationSummary(true)
+
+    <fieldset>
+        <legend>Tournament</legend>
+
+        @Html.HiddenFor(model => model.TournamentId)
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.TournamentName)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.TournamentName)
+            @Html.ValidationMessageFor(model => model.TournamentName)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.VenueId, "Venue")
+        </div>
+        <div class="editor-field">
+            @Html.DropDownList("VenueId", String.Empty)
+            @Html.ValidationMessageFor(model => model.VenueId)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.StartDate)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.StartDate)
+            @Html.ValidationMessageFor(model => model.StartDate)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.EndDate)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.EndDate)
+            @Html.ValidationMessageFor(model => model.EndDate)
+        </div>
+
+        <p>
+            <input type="submit" value="Save" />
+        </p>
+    </fieldset>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>

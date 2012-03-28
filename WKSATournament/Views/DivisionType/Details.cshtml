@@ -1,0 +1,29 @@
+﻿@model WKSADB.DivisionType
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<fieldset>
+    <legend>DivisionType</legend>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.Description)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Description)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.IsGrandChampionDivision)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.IsGrandChampionDivision)
+    </div>
+</fieldset>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id=Model.DivisionTypeId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

@@ -1,0 +1,673 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="WKSAModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
+  <EntityContainer Name="WKSAModelStoreContainer">
+    <EntitySet Name="AgeGroup" EntityType="WKSAModel.Store.AgeGroup" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Competitor" EntityType="WKSAModel.Store.Competitor" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="CompetitorEvent" EntityType="WKSAModel.Store.CompetitorEvent" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Country" EntityType="WKSAModel.Store.Country" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Division" EntityType="WKSAModel.Store.Division" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="DivisionType" EntityType="WKSAModel.Store.DivisionType" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="GrandChampion" EntityType="WKSAModel.Store.GrandChampion" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Rank" EntityType="WKSAModel.Store.Rank" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="School" EntityType="WKSAModel.Store.School" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Student" EntityType="WKSAModel.Store.Student" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="sysdiagrams" EntityType="WKSAModel.Store.sysdiagrams" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="TBL_SEX" EntityType="WKSAModel.Store.TBL_SEX" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="TBL_TOURNAMENT_GRAND_CHAMP" EntityType="WKSAModel.Store.TBL_TOURNAMENT_GRAND_CHAMP" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="TBL_TOURNAMENT_TYPE_AGE" EntityType="WKSAModel.Store.TBL_TOURNAMENT_TYPE_AGE" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="TBL_TOURNAMENT_TYPE_EVENT" EntityType="WKSAModel.Store.TBL_TOURNAMENT_TYPE_EVENT" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Tournament" EntityType="WKSAModel.Store.Tournament" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="TournamentEvent" EntityType="WKSAModel.Store.TournamentEvent" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="TournamentType" EntityType="WKSAModel.Store.TournamentType" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Venue" EntityType="WKSAModel.Store.Venue" store:Type="Tables" Schema="dbo" />
+    <AssociationSet Name="FK_TBL_COMPETITOR_EVENT_TBL_COMPETITOR" Association="WKSAModel.Store.FK_TBL_COMPETITOR_EVENT_TBL_COMPETITOR">
+      <End Role="Competitor" EntitySet="Competitor" />
+      <End Role="CompetitorEvent" EntitySet="CompetitorEvent" />
+    </AssociationSet>
+    <AssociationSet Name="FK_TBL_COMPETITOR_EVENT_TBL_TOURNAMENT_EVENT" Association="WKSAModel.Store.FK_TBL_COMPETITOR_EVENT_TBL_TOURNAMENT_EVENT">
+      <End Role="TournamentEvent" EntitySet="TournamentEvent" />
+      <End Role="CompetitorEvent" EntitySet="CompetitorEvent" />
+    </AssociationSet>
+    <AssociationSet Name="FK_TBL_COMPETITOR_TBL_STUDENT" Association="WKSAModel.Store.FK_TBL_COMPETITOR_TBL_STUDENT">
+      <End Role="Student" EntitySet="Student" />
+      <End Role="Competitor" EntitySet="Competitor" />
+    </AssociationSet>
+    <AssociationSet Name="FK_TBL_COMPETITOR_TBL_TOURNAMENT" Association="WKSAModel.Store.FK_TBL_COMPETITOR_TBL_TOURNAMENT">
+      <End Role="Tournament" EntitySet="Tournament" />
+      <End Role="Competitor" EntitySet="Competitor" />
+    </AssociationSet>
+    <AssociationSet Name="FK_TBL_EVENT_TBL_AGE" Association="WKSAModel.Store.FK_TBL_EVENT_TBL_AGE">
+      <End Role="AgeGroup" EntitySet="AgeGroup" />
+      <End Role="Division" EntitySet="Division" />
+    </AssociationSet>
+    <AssociationSet Name="FK_TBL_EVENT_TBL_EVENT_TYPE" Association="WKSAModel.Store.FK_TBL_EVENT_TBL_EVENT_TYPE">
+      <End Role="DivisionType" EntitySet="DivisionType" />
+      <End Role="Division" EntitySet="Division" />
+    </AssociationSet>
+    <AssociationSet Name="FK_TBL_EVENT_TBL_RANK" Association="WKSAModel.Store.FK_TBL_EVENT_TBL_RANK">
+      <End Role="Rank" EntitySet="Rank" />
+      <End Role="Division" EntitySet="Division" />
+    </AssociationSet>
+    <AssociationSet Name="FK_TBL_EVENT_TBL_SEX" Association="WKSAModel.Store.FK_TBL_EVENT_TBL_SEX">
+      <End Role="TBL_SEX" EntitySet="TBL_SEX" />
+      <End Role="Division" EntitySet="Division" />
+    </AssociationSet>
+    <AssociationSet Name="FK_TBL_GRAND_CHAMP_TBL_AGE" Association="WKSAModel.Store.FK_TBL_GRAND_CHAMP_TBL_AGE">
+      <End Role="AgeGroup" EntitySet="AgeGroup" />
+      <End Role="GrandChampion" EntitySet="GrandChampion" />
+    </AssociationSet>
+    <AssociationSet Name="FK_TBL_GRAND_CHAMP_TBL_RANK" Association="WKSAModel.Store.FK_TBL_GRAND_CHAMP_TBL_RANK">
+      <End Role="Rank" EntitySet="Rank" />
+      <End Role="GrandChampion" EntitySet="GrandChampion" />
+    </AssociationSet>
+    <AssociationSet Name="FK_TBL_GRAND_CHAMP_TBL_SEX" Association="WKSAModel.Store.FK_TBL_GRAND_CHAMP_TBL_SEX">
+      <End Role="TBL_SEX" EntitySet="TBL_SEX" />
+      <End Role="GrandChampion" EntitySet="GrandChampion" />
+    </AssociationSet>
+    <AssociationSet Name="FK_TBL_GRAND_CHAMP_TBL_TOURNAMENT_TYPE" Association="WKSAModel.Store.FK_TBL_GRAND_CHAMP_TBL_TOURNAMENT_TYPE">
+      <End Role="TournamentType" EntitySet="TournamentType" />
+      <End Role="GrandChampion" EntitySet="GrandChampion" />
+    </AssociationSet>
+    <AssociationSet Name="FK_TBL_SCHOOL_TBL_COUNTRY" Association="WKSAModel.Store.FK_TBL_SCHOOL_TBL_COUNTRY">
+      <End Role="Country" EntitySet="Country" />
+      <End Role="School" EntitySet="School" />
+    </AssociationSet>
+    <AssociationSet Name="FK_TBL_SCHOOL_TBL_STUDENT" Association="WKSAModel.Store.FK_TBL_SCHOOL_TBL_STUDENT">
+      <End Role="Student" EntitySet="Student" />
+      <End Role="School" EntitySet="School" />
+    </AssociationSet>
+    <AssociationSet Name="FK_TBL_STUDENT_TBL_COUNTRY" Association="WKSAModel.Store.FK_TBL_STUDENT_TBL_COUNTRY">
+      <End Role="Country" EntitySet="Country" />
+      <End Role="Student" EntitySet="Student" />
+    </AssociationSet>
+    <AssociationSet Name="FK_TBL_STUDENT_TBL_RANK" Association="WKSAModel.Store.FK_TBL_STUDENT_TBL_RANK">
+      <End Role="Rank" EntitySet="Rank" />
+      <End Role="Student" EntitySet="Student" />
+    </AssociationSet>
+    <AssociationSet Name="FK_TBL_STUDENT_TBL_SCHOOL" Association="WKSAModel.Store.FK_TBL_STUDENT_TBL_SCHOOL">
+      <End Role="School" EntitySet="School" />
+      <End Role="Student" EntitySet="Student" />
+    </AssociationSet>
+    <AssociationSet Name="FK_TBL_STUDENT_TBL_SEX" Association="WKSAModel.Store.FK_TBL_STUDENT_TBL_SEX">
+      <End Role="TBL_SEX" EntitySet="TBL_SEX" />
+      <End Role="Student" EntitySet="Student" />
+    </AssociationSet>
+    <AssociationSet Name="FK_TBL_TOURNAMENT_EVENT_TBL_EVENT" Association="WKSAModel.Store.FK_TBL_TOURNAMENT_EVENT_TBL_EVENT">
+      <End Role="Division" EntitySet="Division" />
+      <End Role="TournamentEvent" EntitySet="TournamentEvent" />
+    </AssociationSet>
+    <AssociationSet Name="FK_TBL_TOURNAMENT_EVENT_TBL_TOURNAMENT" Association="WKSAModel.Store.FK_TBL_TOURNAMENT_EVENT_TBL_TOURNAMENT">
+      <End Role="Tournament" EntitySet="Tournament" />
+      <End Role="TournamentEvent" EntitySet="TournamentEvent" />
+    </AssociationSet>
+    <AssociationSet Name="FK_TBL_TOURNAMENT_GRAND_CHAMP_TBL_COMPETITOR" Association="WKSAModel.Store.FK_TBL_TOURNAMENT_GRAND_CHAMP_TBL_COMPETITOR">
+      <End Role="Competitor" EntitySet="Competitor" />
+      <End Role="TBL_TOURNAMENT_GRAND_CHAMP" EntitySet="TBL_TOURNAMENT_GRAND_CHAMP" />
+    </AssociationSet>
+    <AssociationSet Name="FK_TBL_TOURNAMENT_GRAND_CHAMP_TBL_GRAND_CHAMP" Association="WKSAModel.Store.FK_TBL_TOURNAMENT_GRAND_CHAMP_TBL_GRAND_CHAMP">
+      <End Role="GrandChampion" EntitySet="GrandChampion" />
+      <End Role="TBL_TOURNAMENT_GRAND_CHAMP" EntitySet="TBL_TOURNAMENT_GRAND_CHAMP" />
+    </AssociationSet>
+    <AssociationSet Name="FK_TBL_TOURNAMENT_GRAND_CHAMP_TBL_TOURNAMENT" Association="WKSAModel.Store.FK_TBL_TOURNAMENT_GRAND_CHAMP_TBL_TOURNAMENT">
+      <End Role="Tournament" EntitySet="Tournament" />
+      <End Role="TBL_TOURNAMENT_GRAND_CHAMP" EntitySet="TBL_TOURNAMENT_GRAND_CHAMP" />
+    </AssociationSet>
+    <AssociationSet Name="FK_TBL_TOURNAMENT_TBL_TOURNAMENT_TYPE" Association="WKSAModel.Store.FK_TBL_TOURNAMENT_TBL_TOURNAMENT_TYPE">
+      <End Role="TournamentType" EntitySet="TournamentType" />
+      <End Role="Tournament" EntitySet="Tournament" />
+    </AssociationSet>
+    <AssociationSet Name="FK_TBL_TOURNAMENT_TBL_VENUE" Association="WKSAModel.Store.FK_TBL_TOURNAMENT_TBL_VENUE">
+      <End Role="Venue" EntitySet="Venue" />
+      <End Role="Tournament" EntitySet="Tournament" />
+    </AssociationSet>
+    <AssociationSet Name="FK_TBL_TOURNAMENT_TYPE_AGE_TBL_AGE" Association="WKSAModel.Store.FK_TBL_TOURNAMENT_TYPE_AGE_TBL_AGE">
+      <End Role="AgeGroup" EntitySet="AgeGroup" />
+      <End Role="TBL_TOURNAMENT_TYPE_AGE" EntitySet="TBL_TOURNAMENT_TYPE_AGE" />
+    </AssociationSet>
+    <AssociationSet Name="FK_TBL_TOURNAMENT_TYPE_AGE_TBL_TOURNAMENT_TYPE" Association="WKSAModel.Store.FK_TBL_TOURNAMENT_TYPE_AGE_TBL_TOURNAMENT_TYPE">
+      <End Role="TournamentType" EntitySet="TournamentType" />
+      <End Role="TBL_TOURNAMENT_TYPE_AGE" EntitySet="TBL_TOURNAMENT_TYPE_AGE" />
+    </AssociationSet>
+    <AssociationSet Name="FK_TBL_TOURNAMENT_TYPE_EVENT_TBL_EVENT" Association="WKSAModel.Store.FK_TBL_TOURNAMENT_TYPE_EVENT_TBL_EVENT">
+      <End Role="Division" EntitySet="Division" />
+      <End Role="TBL_TOURNAMENT_TYPE_EVENT" EntitySet="TBL_TOURNAMENT_TYPE_EVENT" />
+    </AssociationSet>
+    <AssociationSet Name="FK_TBL_TOURNAMENT_TYPE_EVENT_TBL_TOURNAMENT_TYPE" Association="WKSAModel.Store.FK_TBL_TOURNAMENT_TYPE_EVENT_TBL_TOURNAMENT_TYPE">
+      <End Role="TournamentType" EntitySet="TournamentType" />
+      <End Role="TBL_TOURNAMENT_TYPE_EVENT" EntitySet="TBL_TOURNAMENT_TYPE_EVENT" />
+    </AssociationSet>
+  </EntityContainer>
+  <EntityType Name="AgeGroup">
+    <Key>
+      <PropertyRef Name="AGE_ID" />
+    </Key>
+    <Property Name="AGE_ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="DESCRIPTION" Type="varchar" Nullable="false" MaxLength="20" />
+    <Property Name="FROM_AGE" Type="int" Nullable="false" />
+    <Property Name="TO_AGE" Type="int" Nullable="false" />
+    <Property Name="SPARRING_GROUP" Type="bit" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Competitor">
+    <Key>
+      <PropertyRef Name="CompetitorId" />
+    </Key>
+    <Property Name="CompetitorId" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="TournamentId" Type="int" Nullable="false" />
+    <Property Name="StudentId" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="CompetitorEvent">
+    <Key>
+      <PropertyRef Name="CompetitorEventId" />
+    </Key>
+    <Property Name="CompetitorEventId" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="CompetitorId" Type="int" Nullable="false" />
+    <Property Name="TournamentEventId" Type="int" Nullable="false" />
+    <Property Name="Result" Type="tinyint" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Country">
+    <Key>
+      <PropertyRef Name="COUNTRY_ID" />
+    </Key>
+    <Property Name="COUNTRY_ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="COUNTRY_NAME" Type="varchar" Nullable="false" MaxLength="100" />
+  </EntityType>
+  <EntityType Name="Division">
+    <Key>
+      <PropertyRef Name="DivisionId" />
+    </Key>
+    <Property Name="DivisionId" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="DivisionName" Type="varchar" Nullable="false" MaxLength="255" />
+    <Property Name="DivisionTypeId" Type="int" Nullable="false" />
+    <Property Name="RankId" Type="int" Nullable="false" />
+    <Property Name="AgeGroupId" Type="int" Nullable="false" />
+    <Property Name="IsMale" Type="bit" />
+  </EntityType>
+  <EntityType Name="DivisionType">
+    <Key>
+      <PropertyRef Name="DivisionTypeId" />
+    </Key>
+    <Property Name="DivisionTypeId" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="Description" Type="varchar" Nullable="false" MaxLength="255" />
+    <Property Name="IsGrandChampionDivision" Type="bit" Nullable="false" />
+  </EntityType>
+  <EntityType Name="GrandChampion">
+    <Key>
+      <PropertyRef Name="GrandChampionId" />
+    </Key>
+    <Property Name="GrandChampionId" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="Description" Type="varchar" Nullable="false" MaxLength="255" />
+    <Property Name="TournamentTypeId" Type="int" Nullable="false" />
+    <Property Name="RankId" Type="int" Nullable="false" />
+    <Property Name="AgeGroupId" Type="int" Nullable="false" />
+    <Property Name="IsMale" Type="bit" />
+  </EntityType>
+  <EntityType Name="Rank">
+    <Key>
+      <PropertyRef Name="RankId" />
+    </Key>
+    <Property Name="RankId" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="Description" Type="varchar" Nullable="false" MaxLength="20" />
+  </EntityType>
+  <EntityType Name="School">
+    <Key>
+      <PropertyRef Name="SchoolId" />
+    </Key>
+    <Property Name="SchoolId" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="SchoolCode" Type="varchar" Nullable="false" MaxLength="255" />
+    <Property Name="SchoolName" Type="varchar" Nullable="false" MaxLength="255" />
+    <Property Name="CountryId" Type="int" Nullable="false" />
+    <Property Name="InstructorId" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Student">
+    <Key>
+      <PropertyRef Name="StudentId" />
+    </Key>
+    <Property Name="StudentId" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="WKSAId" Type="varchar" MaxLength="20" />
+    <Property Name="BlackBeltId" Type="varchar" MaxLength="20" />
+    <Property Name="FirstName" Type="nvarchar" Nullable="false" MaxLength="255" />
+    <Property Name="LastName" Type="nvarchar" Nullable="false" MaxLength="255" />
+    <Property Name="DateOfBirth" Type="datetime" />
+    <Property Name="Address1" Type="nvarchar" MaxLength="50" />
+    <Property Name="Address2" Type="nvarchar" MaxLength="50" />
+    <Property Name="Address3" Type="nvarchar" MaxLength="50" />
+    <Property Name="Address4" Type="nvarchar" MaxLength="50" />
+    <Property Name="Address5" Type="nvarchar" MaxLength="50" />
+    <Property Name="Postcode" Type="varchar" MaxLength="20" />
+    <Property Name="CountryId" Type="int" Nullable="false" />
+    <Property Name="RankId" Type="int" Nullable="false" />
+    <Property Name="IsMale" Type="bit" Nullable="false" />
+    <Property Name="SchoolId" Type="int" Nullable="false" />
+    <Property Name="IsSchoolOwner" Type="bit" Nullable="false" />
+  </EntityType>
+  <EntityType Name="sysdiagrams">
+    <Key>
+      <PropertyRef Name="diagram_id" />
+    </Key>
+    <Property Name="name" Type="nvarchar" Nullable="false" MaxLength="128" />
+    <Property Name="principal_id" Type="int" Nullable="false" />
+    <Property Name="diagram_id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="version" Type="int" />
+    <Property Name="definition" Type="varbinary(max)" />
+  </EntityType>
+  <EntityType Name="TBL_SEX">
+    <Key>
+      <PropertyRef Name="SEX_ID" />
+    </Key>
+    <Property Name="SEX_ID" Type="bit" Nullable="false" />
+    <Property Name="DESCRIPTION" Type="varchar" Nullable="false" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="TBL_TOURNAMENT_GRAND_CHAMP">
+    <Key>
+      <PropertyRef Name="TOURNAMENT_GRAND_CHAMP_ID" />
+    </Key>
+    <Property Name="TOURNAMENT_GRAND_CHAMP_ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="TOURNAMENT_ID" Type="int" Nullable="false" />
+    <Property Name="GRAND_CHAMP_ID" Type="int" Nullable="false" />
+    <Property Name="COMPETITOR_ID" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="TBL_TOURNAMENT_TYPE_AGE">
+    <Key>
+      <PropertyRef Name="TOURNAMENT_TYPE_AGE_ID" />
+    </Key>
+    <Property Name="TOURNAMENT_TYPE_AGE_ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="TOURNAMENT_TYPE_ID" Type="int" Nullable="false" />
+    <Property Name="AGE_ID" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="TBL_TOURNAMENT_TYPE_EVENT">
+    <Key>
+      <PropertyRef Name="TOURNAMENT_TYPE_EVENT_ID" />
+    </Key>
+    <Property Name="TOURNAMENT_TYPE_EVENT_ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="TOURNAMENT_TYPE_ID" Type="int" Nullable="false" />
+    <Property Name="EVENT_ID" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Tournament">
+    <Key>
+      <PropertyRef Name="TournamentId" />
+    </Key>
+    <Property Name="TournamentId" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="TournamentTypeId" Type="int" Nullable="false" />
+    <Property Name="VenueId" Type="int" Nullable="false" />
+    <Property Name="StartDate" Type="datetime" Nullable="false" />
+    <Property Name="EndDate" Type="datetime" Nullable="false" />
+  </EntityType>
+  <EntityType Name="TournamentEvent">
+    <Key>
+      <PropertyRef Name="TournamentEventId" />
+    </Key>
+    <Property Name="TournamentEventId" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="TournamentId" Type="int" Nullable="false" />
+    <Property Name="EventId" Type="int" Nullable="false" />
+    <Property Name="IsCompleted" Type="bit" Nullable="false" />
+  </EntityType>
+  <EntityType Name="TournamentType">
+    <Key>
+      <PropertyRef Name="TournamentTypeId" />
+    </Key>
+    <Property Name="TournamentTypeId" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="Description" Type="varchar" Nullable="false" MaxLength="255" />
+  </EntityType>
+  <EntityType Name="Venue">
+    <Key>
+      <PropertyRef Name="VenueId" />
+    </Key>
+    <Property Name="VenueId" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="VenueName" Type="nvarchar" Nullable="false" MaxLength="255" />
+    <Property Name="Address1" Type="nvarchar" MaxLength="50" />
+    <Property Name="Address2" Type="nvarchar" MaxLength="50" />
+    <Property Name="Address3" Type="nvarchar" MaxLength="50" />
+    <Property Name="Address4" Type="nvarchar" MaxLength="50" />
+    <Property Name="Address5" Type="nvarchar" MaxLength="50" />
+    <Property Name="Postcode" Type="varchar" MaxLength="20" />
+    <Property Name="CountryId" Type="int" Nullable="false" />
+  </EntityType>
+  <Association Name="FK_TBL_COMPETITOR_EVENT_TBL_COMPETITOR">
+    <End Role="Competitor" Type="WKSAModel.Store.Competitor" Multiplicity="1" />
+    <End Role="CompetitorEvent" Type="WKSAModel.Store.CompetitorEvent" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Competitor">
+        <PropertyRef Name="CompetitorId" />
+      </Principal>
+      <Dependent Role="CompetitorEvent">
+        <PropertyRef Name="CompetitorId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_TBL_COMPETITOR_EVENT_TBL_TOURNAMENT_EVENT">
+    <End Role="TournamentEvent" Type="WKSAModel.Store.TournamentEvent" Multiplicity="1" />
+    <End Role="CompetitorEvent" Type="WKSAModel.Store.CompetitorEvent" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="TournamentEvent">
+        <PropertyRef Name="TournamentEventId" />
+      </Principal>
+      <Dependent Role="CompetitorEvent">
+        <PropertyRef Name="TournamentEventId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_TBL_COMPETITOR_TBL_STUDENT">
+    <End Role="Student" Type="WKSAModel.Store.Student" Multiplicity="1" />
+    <End Role="Competitor" Type="WKSAModel.Store.Competitor" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Student">
+        <PropertyRef Name="StudentId" />
+      </Principal>
+      <Dependent Role="Competitor">
+        <PropertyRef Name="StudentId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_TBL_COMPETITOR_TBL_TOURNAMENT">
+    <End Role="Tournament" Type="WKSAModel.Store.Tournament" Multiplicity="1" />
+    <End Role="Competitor" Type="WKSAModel.Store.Competitor" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Tournament">
+        <PropertyRef Name="TournamentId" />
+      </Principal>
+      <Dependent Role="Competitor">
+        <PropertyRef Name="TournamentId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_TBL_EVENT_TBL_AGE">
+    <End Role="AgeGroup" Type="WKSAModel.Store.AgeGroup" Multiplicity="1" />
+    <End Role="Division" Type="WKSAModel.Store.Division" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="AgeGroup">
+        <PropertyRef Name="AGE_ID" />
+      </Principal>
+      <Dependent Role="Division">
+        <PropertyRef Name="AgeGroupId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_TBL_EVENT_TBL_EVENT_TYPE">
+    <End Role="DivisionType" Type="WKSAModel.Store.DivisionType" Multiplicity="1" />
+    <End Role="Division" Type="WKSAModel.Store.Division" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="DivisionType">
+        <PropertyRef Name="DivisionTypeId" />
+      </Principal>
+      <Dependent Role="Division">
+        <PropertyRef Name="DivisionTypeId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_TBL_EVENT_TBL_RANK">
+    <End Role="Rank" Type="WKSAModel.Store.Rank" Multiplicity="1" />
+    <End Role="Division" Type="WKSAModel.Store.Division" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Rank">
+        <PropertyRef Name="RankId" />
+      </Principal>
+      <Dependent Role="Division">
+        <PropertyRef Name="RankId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_TBL_EVENT_TBL_SEX">
+    <End Role="TBL_SEX" Type="WKSAModel.Store.TBL_SEX" Multiplicity="0..1" />
+    <End Role="Division" Type="WKSAModel.Store.Division" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="TBL_SEX">
+        <PropertyRef Name="SEX_ID" />
+      </Principal>
+      <Dependent Role="Division">
+        <PropertyRef Name="IsMale" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_TBL_GRAND_CHAMP_TBL_AGE">
+    <End Role="AgeGroup" Type="WKSAModel.Store.AgeGroup" Multiplicity="1" />
+    <End Role="GrandChampion" Type="WKSAModel.Store.GrandChampion" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="AgeGroup">
+        <PropertyRef Name="AGE_ID" />
+      </Principal>
+      <Dependent Role="GrandChampion">
+        <PropertyRef Name="AgeGroupId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_TBL_GRAND_CHAMP_TBL_RANK">
+    <End Role="Rank" Type="WKSAModel.Store.Rank" Multiplicity="1" />
+    <End Role="GrandChampion" Type="WKSAModel.Store.GrandChampion" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Rank">
+        <PropertyRef Name="RankId" />
+      </Principal>
+      <Dependent Role="GrandChampion">
+        <PropertyRef Name="RankId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_TBL_GRAND_CHAMP_TBL_SEX">
+    <End Role="TBL_SEX" Type="WKSAModel.Store.TBL_SEX" Multiplicity="0..1" />
+    <End Role="GrandChampion" Type="WKSAModel.Store.GrandChampion" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="TBL_SEX">
+        <PropertyRef Name="SEX_ID" />
+      </Principal>
+      <Dependent Role="GrandChampion">
+        <PropertyRef Name="IsMale" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_TBL_GRAND_CHAMP_TBL_TOURNAMENT_TYPE">
+    <End Role="TournamentType" Type="WKSAModel.Store.TournamentType" Multiplicity="1" />
+    <End Role="GrandChampion" Type="WKSAModel.Store.GrandChampion" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="TournamentType">
+        <PropertyRef Name="TournamentTypeId" />
+      </Principal>
+      <Dependent Role="GrandChampion">
+        <PropertyRef Name="TournamentTypeId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_TBL_SCHOOL_TBL_COUNTRY">
+    <End Role="Country" Type="WKSAModel.Store.Country" Multiplicity="1" />
+    <End Role="School" Type="WKSAModel.Store.School" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Country">
+        <PropertyRef Name="COUNTRY_ID" />
+      </Principal>
+      <Dependent Role="School">
+        <PropertyRef Name="CountryId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_TBL_SCHOOL_TBL_STUDENT">
+    <End Role="Student" Type="WKSAModel.Store.Student" Multiplicity="1" />
+    <End Role="School" Type="WKSAModel.Store.School" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Student">
+        <PropertyRef Name="StudentId" />
+      </Principal>
+      <Dependent Role="School">
+        <PropertyRef Name="InstructorId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_TBL_STUDENT_TBL_COUNTRY">
+    <End Role="Country" Type="WKSAModel.Store.Country" Multiplicity="1" />
+    <End Role="Student" Type="WKSAModel.Store.Student" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Country">
+        <PropertyRef Name="COUNTRY_ID" />
+      </Principal>
+      <Dependent Role="Student">
+        <PropertyRef Name="CountryId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_TBL_STUDENT_TBL_RANK">
+    <End Role="Rank" Type="WKSAModel.Store.Rank" Multiplicity="1" />
+    <End Role="Student" Type="WKSAModel.Store.Student" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Rank">
+        <PropertyRef Name="RankId" />
+      </Principal>
+      <Dependent Role="Student">
+        <PropertyRef Name="RankId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_TBL_STUDENT_TBL_SCHOOL">
+    <End Role="School" Type="WKSAModel.Store.School" Multiplicity="1" />
+    <End Role="Student" Type="WKSAModel.Store.Student" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="School">
+        <PropertyRef Name="SchoolId" />
+      </Principal>
+      <Dependent Role="Student">
+        <PropertyRef Name="SchoolId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_TBL_STUDENT_TBL_SEX">
+    <End Role="TBL_SEX" Type="WKSAModel.Store.TBL_SEX" Multiplicity="1" />
+    <End Role="Student" Type="WKSAModel.Store.Student" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="TBL_SEX">
+        <PropertyRef Name="SEX_ID" />
+      </Principal>
+      <Dependent Role="Student">
+        <PropertyRef Name="IsMale" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_TBL_TOURNAMENT_EVENT_TBL_EVENT">
+    <End Role="Division" Type="WKSAModel.Store.Division" Multiplicity="1" />
+    <End Role="TournamentEvent" Type="WKSAModel.Store.TournamentEvent" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Division">
+        <PropertyRef Name="DivisionId" />
+      </Principal>
+      <Dependent Role="TournamentEvent">
+        <PropertyRef Name="EventId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_TBL_TOURNAMENT_EVENT_TBL_TOURNAMENT">
+    <End Role="Tournament" Type="WKSAModel.Store.Tournament" Multiplicity="1" />
+    <End Role="TournamentEvent" Type="WKSAModel.Store.TournamentEvent" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Tournament">
+        <PropertyRef Name="TournamentId" />
+      </Principal>
+      <Dependent Role="TournamentEvent">
+        <PropertyRef Name="TournamentId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_TBL_TOURNAMENT_GRAND_CHAMP_TBL_COMPETITOR">
+    <End Role="Competitor" Type="WKSAModel.Store.Competitor" Multiplicity="1" />
+    <End Role="TBL_TOURNAMENT_GRAND_CHAMP" Type="WKSAModel.Store.TBL_TOURNAMENT_GRAND_CHAMP" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Competitor">
+        <PropertyRef Name="CompetitorId" />
+      </Principal>
+      <Dependent Role="TBL_TOURNAMENT_GRAND_CHAMP">
+        <PropertyRef Name="COMPETITOR_ID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_TBL_TOURNAMENT_GRAND_CHAMP_TBL_GRAND_CHAMP">
+    <End Role="GrandChampion" Type="WKSAModel.Store.GrandChampion" Multiplicity="1" />
+    <End Role="TBL_TOURNAMENT_GRAND_CHAMP" Type="WKSAModel.Store.TBL_TOURNAMENT_GRAND_CHAMP" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="GrandChampion">
+        <PropertyRef Name="GrandChampionId" />
+      </Principal>
+      <Dependent Role="TBL_TOURNAMENT_GRAND_CHAMP">
+        <PropertyRef Name="GRAND_CHAMP_ID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_TBL_TOURNAMENT_GRAND_CHAMP_TBL_TOURNAMENT">
+    <End Role="Tournament" Type="WKSAModel.Store.Tournament" Multiplicity="1" />
+    <End Role="TBL_TOURNAMENT_GRAND_CHAMP" Type="WKSAModel.Store.TBL_TOURNAMENT_GRAND_CHAMP" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Tournament">
+        <PropertyRef Name="TournamentId" />
+      </Principal>
+      <Dependent Role="TBL_TOURNAMENT_GRAND_CHAMP">
+        <PropertyRef Name="TOURNAMENT_ID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_TBL_TOURNAMENT_TBL_TOURNAMENT_TYPE">
+    <End Role="TournamentType" Type="WKSAModel.Store.TournamentType" Multiplicity="1" />
+    <End Role="Tournament" Type="WKSAModel.Store.Tournament" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="TournamentType">
+        <PropertyRef Name="TournamentTypeId" />
+      </Principal>
+      <Dependent Role="Tournament">
+        <PropertyRef Name="TournamentTypeId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_TBL_TOURNAMENT_TBL_VENUE">
+    <End Role="Venue" Type="WKSAModel.Store.Venue" Multiplicity="1" />
+    <End Role="Tournament" Type="WKSAModel.Store.Tournament" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Venue">
+        <PropertyRef Name="VenueId" />
+      </Principal>
+      <Dependent Role="Tournament">
+        <PropertyRef Name="VenueId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_TBL_TOURNAMENT_TYPE_AGE_TBL_AGE">
+    <End Role="AgeGroup" Type="WKSAModel.Store.AgeGroup" Multiplicity="1" />
+    <End Role="TBL_TOURNAMENT_TYPE_AGE" Type="WKSAModel.Store.TBL_TOURNAMENT_TYPE_AGE" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="AgeGroup">
+        <PropertyRef Name="AGE_ID" />
+      </Principal>
+      <Dependent Role="TBL_TOURNAMENT_TYPE_AGE">
+        <PropertyRef Name="AGE_ID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_TBL_TOURNAMENT_TYPE_AGE_TBL_TOURNAMENT_TYPE">
+    <End Role="TournamentType" Type="WKSAModel.Store.TournamentType" Multiplicity="1" />
+    <End Role="TBL_TOURNAMENT_TYPE_AGE" Type="WKSAModel.Store.TBL_TOURNAMENT_TYPE_AGE" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="TournamentType">
+        <PropertyRef Name="TournamentTypeId" />
+      </Principal>
+      <Dependent Role="TBL_TOURNAMENT_TYPE_AGE">
+        <PropertyRef Name="TOURNAMENT_TYPE_ID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_TBL_TOURNAMENT_TYPE_EVENT_TBL_EVENT">
+    <End Role="Division" Type="WKSAModel.Store.Division" Multiplicity="1" />
+    <End Role="TBL_TOURNAMENT_TYPE_EVENT" Type="WKSAModel.Store.TBL_TOURNAMENT_TYPE_EVENT" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Division">
+        <PropertyRef Name="DivisionId" />
+      </Principal>
+      <Dependent Role="TBL_TOURNAMENT_TYPE_EVENT">
+        <PropertyRef Name="EVENT_ID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_TBL_TOURNAMENT_TYPE_EVENT_TBL_TOURNAMENT_TYPE">
+    <End Role="TournamentType" Type="WKSAModel.Store.TournamentType" Multiplicity="1" />
+    <End Role="TBL_TOURNAMENT_TYPE_EVENT" Type="WKSAModel.Store.TBL_TOURNAMENT_TYPE_EVENT" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="TournamentType">
+        <PropertyRef Name="TournamentTypeId" />
+      </Principal>
+      <Dependent Role="TBL_TOURNAMENT_TYPE_EVENT">
+        <PropertyRef Name="TOURNAMENT_TYPE_ID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+</Schema>
