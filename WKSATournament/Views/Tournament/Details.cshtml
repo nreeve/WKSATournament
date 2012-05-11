@@ -1,14 +1,289 @@
 ﻿@model WKSADB.Tournament
+@using WKSATournament
 
 @{
     ViewBag.Title = Model.TournamentName;
 }
 
-<h2>@string.Format("{0} - {1} ({2} - {3})", Model.TournamentName, Model.Venue.VenueName, Model.StartDate.ToShortDateString(), Model.EndDate.ToShortDateString())</h2>
+@section featured {
+    @Html.Partial("TournamentStats", (TournamentStats)ViewBag.TournamentStats)
+}
+<link href="@Url.Content("~/Content/ui.jqgrid.css")" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="@Url.Content("~/Scripts/grid.locale-en.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jquery.jqGrid.min.js")"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var code = "";
+        var recording = false;
 
-<h3>Competitors</h3>
-<p>@Html.ActionLink("Add Competitor", "Create", "Competitor", new { tournamentId = Model.TournamentId}, null)</p>
-<p>
-    @Html.ActionLink("Edit Settings", "Edit", new { id=Model.TournamentId }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>
+        $("#tabs").tabs();
+
+        $('#jqgCompetitors').jqGrid({
+            //url from wich data should be requested
+            url: '/Competitor/GridData/@Model.TournamentId',
+            //type of data
+            datatype: 'json',
+            //url access method type
+            mtype: 'POST',
+            //columns names
+            colNames: ['CompetitorId', 'First Name', 'Last Name', 'Rank', 'School'],
+            //columns model
+            colModel: [
+                            { name: 'CompetitorId', index: 'CompetitorId', align: 'left', search: false, hidden: true },
+                            { name: 'FirstName', index: 'Student.FirstName', align: 'left', stype: 'text', formatter: 'showlink', formatoptions: { baseLinkUrl: '/Competitor/Edit/', idName: 'id'} },
+                            { name: 'LastName', index: 'Student.LastName', align: 'left', stype: 'text', formatter: 'showlink', formatoptions: { baseLinkUrl: '/Competitor/Edit/', idName: 'id'} },
+                            { name: 'Rank', index: 'Student.RankId', align: 'left', search: 'true', stype: 'select', searchoptions: { value: '@ViewBag.RankFilter'} },
+                            { name: 'School', index: 'Student.School.SchoolName', align: 'left', search: 'true', stype: 'select', searchoptions: { value: '@ViewBag.SchoolFilter'} }
+                      ],
+            //pager for grid
+            pager: $('#jqgpCompetitors'),
+            //number of rows per page
+            rowNum: 25,
+            //initial sorting column
+            sortname: 'CompetitorId',
+            //initial sorting direction
+            sortorder: 'asc',
+            //we want to display total records count
+            viewrecords: true,
+            //grid width
+            width: '600',
+            //grid height
+            height: '575'
+        });
+        $('#jqgCompetitors').jqGrid('filterToolbar', {
+            //we want filters to be returned the same way as with advanced searching
+            stringResult: true
+        });
+        
+        $('#jqgDivisions').jqGrid({
+            //url from wich data should be requested
+            url: '/TournamentDivision/GridData/@Model.TournamentId',
+            //type of data
+            datatype: 'json',
+            //url access method type
+            mtype: 'POST',
+            //columns names
+            colNames: ['DivisionId', 'Division Name', 'Rank', 'Division Type', 'Age Group'],
+            //columns model
+            colModel: [
+                            { name: 'DivisionId', index: 'DivisionId', align: 'left', search: false, hidden: true },
+                            { name: 'DivisionName', index: 'Division.DivisionName', align: 'left', width: 300, search: false, formatter: 'showlink', formatoptions: { baseLinkUrl: '/TournamentDivision/Edit/1', idName: 'DivisionId'} },
+                            { name: 'Rank', index: 'Division.RankId', align: 'left', search: 'true', stype: 'select', searchoptions: { value: '@ViewBag.RankFilter'} },
+                            { name: 'DivisionType', index: 'Division.DivisionTypeId', align: 'left', search: 'true', stype: 'select', searchoptions: { value: '@ViewBag.DivisionTypeFilter'} },
+                            { name: 'AgeGroup', index: 'Division.AgeGroupId', align: 'left', search: 'true', stype: 'select', searchoptions: { value: '@ViewBag.AgeGroupFilter'} }
+                      ],
+            //pager for grid
+            pager: $('#jqgpDivisions'),
+            //number of rows per page
+            rowNum: 25,
+            //initial sorting column
+            sortname: 'DivisionId',
+            //initial sorting direction
+            sortorder: 'asc',
+            //we want to display total records count
+            viewrecords: true,
+            //grid width
+            width: '600',
+            //grid height
+            height: '575'
+        });
+        $('#jqgDivisions').jqGrid('filterToolbar', {
+            //we want filters to be returned the same way as with advanced searching
+            stringResult: true
+        });
+
+        $('#jqgGrandChampions').jqGrid({
+            //url from which data should be requested
+            url: '/GrandChampion/GridData/@Model.TournamentId?GrandChampionId=' + $("#GrandChampionId").val(),
+            //type of data
+            datatype: 'local',
+            //url access method type
+            mtype: 'POST',
+            //columns names
+            colNames: ['GrandChampionId', 'First Name', 'Last Name', 'School', 'G', 'S', 'B', 'C', 'Total Points'],
+            //columns model
+            colModel: [
+                            { name: 'CompetitorId', index: 'CompetitorId', align: 'left', hidden: true },
+                            { name: 'FirstName', index: 'Student.FirstName', align: 'left', stype: 'text', formatter: 'showlink', formatoptions: { baseLinkUrl: '/Competitor/Edit/', idName: 'id'} },
+                            { name: 'LastName', index: 'Student.LastName', align: 'left', stype: 'text', formatter: 'showlink', formatoptions: { baseLinkUrl: '/Competitor/Edit/', idName: 'id'} },
+                            { name: 'School', index: 'Student.School.SchoolName', align: 'left' },
+                            { name: 'Gold', index: 'GoldCount', align: 'center', width: 30 },
+                            { name: 'Silver', index: 'SilverCount', align: 'center', width: 30 },
+                            { name: 'Bronze', index: 'BronzeCount', align: 'center', width: 30 },
+                            { name: 'Copper', index: 'CopperCount', align: 'center', width: 30 },
+                            { name: 'TotalPoints', index: 'TotalPoints', align: 'center', width: 80 }
+                      ],
+            //pager for grid
+            pager: $('#jqgpGrandChampions'),
+            //number of rows per page
+            rowNum: 25,
+            //initial sorting column
+            sortname: 'CompetitorId',
+            //initial sorting direction
+            sortorder: 'asc',
+            //we want to display total records count
+            viewrecords: true,
+            //grid width
+            width: '600',
+            //grid height
+            height: '575'
+        });
+
+        $("#GrandChampionId").change(function (e) {
+            $("#jqgGrandChampions").setGridParam({ url: '/GrandChampion/GridData/@Model.TournamentId?GrandChampionId=' + $("#GrandChampionId").val() });
+            $("#jqgGrandChampions").setGridParam({ datatype: 'json' }).trigger('reloadGrid', [{ page: 1}]);
+        });
+
+        $('#jqgSchoolPlaces').jqGrid({
+            //url from wich data should be requested
+            url: '/School/GridData/@Model.TournamentId',
+            //type of data
+            datatype: 'json',
+            //url access method type
+            mtype: 'POST',
+            //columns names
+            colNames: ['SchoolId', 'School Code', 'School Name', 'Instructor Name', 'Total Points'],
+            //columns model
+            colModel: [
+                            { name: 'SchoolId', index: 'SchoolId', align: 'left', hidden: true },
+                            { name: 'SchoolCode', index: 'SchoolCode', align: 'left' },
+                            { name: 'SchoolName', index: 'SchoolName', align: 'left' },
+                            { name: 'InstructorName', index: 'InstructorName', align: 'left' },
+                            { name: 'TotalPoints', index: 'TotalPoints', align: 'left' }
+                      ],
+            //pager for grid
+            pager: $('#jqgpSchoolPlaces'),
+            //number of rows per page
+            rowNum: 25,
+            //initial sorting column
+            sortname: 'SchoolId',
+            //initial sorting direction
+            sortorder: 'asc',
+            //we want to display total records count
+            viewrecords: true,
+            //grid width
+            width: '600',
+            //grid height
+            height: '575'
+        });
+
+        $(document).keypress(function (e) {
+            if (e.which == 42 && !recording) {
+                recording = true;
+                code = "";
+            }
+            else if (e.which == 42 && recording) {
+                recording = false;
+                if (!isNaN(code)) {
+                    $("#divisionId").val(code);
+                    $("#divisionForm").submit();
+                }
+            }
+            else if (recording) {
+                code += String.fromCharCode(e.which);
+            }
+        });
+    });
+</script>
+
+<article>
+    <div id="tabs">
+	    <ul>
+		    <li><a href="#tabs-1">Divisions</a></li>
+		    <li><a href="#tabs-2">Competitors</a></li>
+            <li><a href="#tabs-3">Grand Champions</a></li>
+            <li><a href="#tabs-4">School Places</a></li>
+	    </ul>
+
+	    <div id="tabs-1">
+            @using (Html.BeginForm("Edit", "TournamentDivision", new { id = Model.TournamentId }, FormMethod.Get))
+            {
+                <div style="width:100%">
+                    <h2 style="float:left;margin-top:5px;">Divisions</h2>
+                    <div style="float:right;padding:10px;">
+                        <label>Enter Division Id:</label>@Html.TextBox("divisionId", string.Empty, new { style = "width:35px;text-align:center;"})<input type="submit" value="Go" />
+                    </div>
+                </div>
+            }
+
+            <div style="float:left;">
+                <table id="jqgDivisions" cellpadding="0" cellspacing="0"></table>
+                <div id="jqgpDivisions" style="text-align:center;"></div>
+            </div>
+        </div>
+	    <div id="tabs-2">
+            <h2>Competitors</h2>
+            <p>@Html.ActionLink("Add Competitor", "Create", "Competitor", new { tournamentId = Model.TournamentId}, null)</p>
+
+            <div>
+                <table id="jqgCompetitors" cellpadding="0" cellspacing="0"></table>
+                <div id="jqgpCompetitors" style="text-align:center;"></div>
+            </div>
+    	</div>
+        <div id="tabs-3">
+            <div style="width:100%">
+                <h2 style="float:left;margin-top:5px;">Grand Champions</h2>
+                <div style="float:right;padding:10px;">
+                    <label>Select:</label>@Html.DropDownList("GrandChampionId", new SelectList(Model.GrandChampions.OrderBy(m => m.RankId).ThenBy(m => m.FromAge), "GrandChampionId", "Description"), string.Empty)
+                </div>
+            </div>
+
+            <div>
+                <table id="jqgGrandChampions" cellpadding="0" cellspacing="0"></table>
+                <div id="jqgpGrandChampions" style="text-align:center;"></div>
+            </div>
+        </div>
+        <div id="tabs-4">
+            <h2>School Places</h2>
+
+            <div>
+                <table id="jqgSchoolPlaces" cellpadding="0" cellspacing="0"></table>
+                <div id="jqgpSchoolPlaces" style="text-align:center;"></div>
+            </div>
+        </div>
+    </div>
+
+    <p>
+        @Html.ActionLink("Edit Settings", "Edit", new { id=Model.TournamentId }) |
+        @Html.ActionLink("Back to List", "Index")
+    </p>
+</article>
+
+<aside>
+    <h3>Judging Sheets</h3>
+    <p>Please select the rank/division/age groups you require sheets for and click on 'Create Sheets'</p>
+    @using (Html.BeginForm("CreateDivisionSheets", "Reports", new { id = Model.TournamentId }, FormMethod.Post))
+    {
+        <table>
+            <tr>
+                <td>@Html.Label("Rank:")</td>
+                <td>@Html.DropDownList("RankId", null, "<All>", new { style = "width:100%;" })</td>
+            </tr>
+            <tr>
+                <td>@Html.Label("Division Type:")</td>
+                <td>@Html.DropDownList("DivisionTypeId", null, "<All>", new { style = "width:100%;" })</td>
+            </tr>
+            <tr>
+                <td>@Html.Label("Age Group:")</td>
+                <td>@Html.DropDownList("AgeGroupId", null, "<All>", new { style = "width:100%;" })</td>
+            </tr>
+            <tr>
+                <td colspan="2">@Html.CheckBox("IncludeRankSheet") @Html.Label("Include Rank Title Sheet?")</td>
+            </tr>
+            <tr>
+                <td colspan="2">@Html.CheckBox("IncludeAgeGroupSheet") @Html.Label("Include Age Group Title Sheet?")</td>
+            </tr>
+            <tr>
+                <td colspan="2" align="right"><input type="submit" value="Create Sheets" /></td>
+            </tr>
+        </table>
+    }
+    <h3>Reports</h3>
+    <p>Please select from the list of reports below</p>
+    <ul>
+        <li>@Html.ActionLink("School Attendance", "SchoolReport", "Reports", new { tournamentId = Model.TournamentId, reportType = Constants.ReportType.SchoolAttend }, null)</li>
+        <li>@Html.ActionLink("Financial", "SchoolReport", "Reports", new { tournamentId = Model.TournamentId, reportType = Constants.ReportType.Financial }, null)</li>
+        <li>@Html.ActionLink("School Places", "SchoolReport", "Reports", new { tournamentId = Model.TournamentId, reportType = Constants.ReportType.SchoolPlaces }, null)</li>
+        <li>@Html.ActionLink("Attendance By Rank", "AttendByRank", "Reports", new { tournamentId = Model.TournamentId }, null)</li>
+    </ul>
+</aside>

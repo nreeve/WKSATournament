@@ -1,0 +1,63 @@
+﻿@model IEnumerable<WKSADB.GrandChampion>
+
+@{
+    ViewBag.Title = "Grand Champions";
+}
+
+<h2>Grand Champions</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Description)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Rank.Description)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FromAge)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ToAge)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Gender)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DivisionCount)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Description)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Rank.Description)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.FromAge)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ToAge)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Gender)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DivisionCount)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.GrandChampionId }) |
+            @Html.ActionLink("Details", "Details", new { id=item.GrandChampionId }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.GrandChampionId })
+        </td>
+    </tr>
+}
+
+</table>

@@ -117,14 +117,18 @@ footer {
 ----------------------------------------------------------*/
 .site-title {
     color: #c8c8c8;
-    font-family: Rockwell, Consolas, "Courier New", Courier, monospace;
+    /*font-family: Rockwell, Consolas, "Courier New", Courier, monospace;*/
     font-size: 2.3em;
-    margin: 20px 0;
+    margin: 20px 0 10px 0;
+    padding:10px 0 0 60px;
+    background: url("images/headerLogo.jpg") no-repeat;
+    height:50px;
 }
 
 .site-title a, .site-title a:hover, .site-title a:active {
     background: none;
     color: #c8c8c8;
+    font-weight:bold;
     outline: none;
     text-decoration: none;
 }
@@ -469,6 +473,12 @@ ul#social li {
 
 /* Tournament Create
 --------------------------------------------------------------*/
+div.eventSelector {
+    float:left;  
+    width:100%;
+    margin-bottom:20px;  
+}
+
 div.eventSelector div {
     float:left;
 }
@@ -681,13 +691,47 @@ div.row div
     padding-right:20px;
 }
 
-div#divisions span 
+div#divisions table td
 {
     background-color:#efeeef;
-    font-style:italic;
+}
+
+div#divisions a
+{
+    font-style:normal;
+    font-weight:bold;
+}
+
+input[type="text"].resultTextBox
+{
+    text-align:center;
+    width:25px;
 }
 
 fieldset input[type="text"].date
 {
     width:100px;
+}
+
+div#suggestedStudents
+{
+    background-color:#efeeef;
+}
+
+div#suggestedStudents ul
+{
+    list-style: none;
+    margin:0;
+    padding:0;
+}
+
+.ui-jqgrid
+{
+    font-size: 11px !important;
+    font-family: "Segoe UI",Verdana,Helvetica,Sans-Serif !important;
+}
+
+div#tabs, div#tabs div
+{
+    float:left;
 }

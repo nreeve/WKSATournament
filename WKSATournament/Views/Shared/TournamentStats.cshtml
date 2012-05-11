@@ -1,0 +1,25 @@
+﻿@model WKSATournament.Models.TournamentStats
+<section class="featured">
+    <div class="content-wrapper">
+        <hgroup class="title">
+            <h1>@Model.TournamentName.</h1>
+            <h2>@Model.TournamentDetails</h2>
+            @Html.ActionLink("Home", "Details", new { id=Model.TournamentId })
+            @Html.ActionLink("Edit Settings", "Edit", new { id=Model.TournamentId })
+        </hgroup>
+        <table>
+            <tr>
+                <td>Total Competitors:</td>
+                <td><span class="highlight">@Model.TotalCompetitors</span></td>
+            </tr>
+            <tr>
+                <td>Divisions Completed:</td>
+                <td><span class="highlight">@Model.CompletedDivisions/@Model.TotalDivisions</span></td>
+            </tr>
+            <tr>
+                <td>Divisions Requiring Medals:</td>
+                <td><span class="highlight">@Model.MedalsRequired</span></td>
+            </tr>
+        </table>
+    </div>
+</section>

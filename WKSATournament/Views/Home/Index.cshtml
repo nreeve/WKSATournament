@@ -19,7 +19,7 @@
 </section>
 }
 
-<h3>We suggest the following:</h3>
+<h3>Please select from the following:</h3>
 
 <ol class="round">
     <li class="one">
@@ -27,6 +27,30 @@
         ASP.NET membership gives you a built-in way to create, store, and 
         validate user credentials (authentication). By default, membership works with a local instance of SQL Server, 
         but you can configure it to use another database.
+
+        <p>@Html.ActionLink("Create New Tournament", "Create")</p>
+        <table>
+            <tr>
+                <th align="left">Tournament Name</th>
+                <th align="left">Venue</th>
+                <th align="left">Start Date</th>
+                <th align="left">End Date</th>
+                <th></th>
+            </tr>
+
+        @foreach (Tournament item in ViewBag.Tournaments) {
+            <tr>
+                <td>@Html.ActionLink(item.TournamentName, "Details", "Tournament", new { id = item.TournamentId }, null)</td>
+                <td>@item.Venue.VenueName</td>
+                <td>@item.StartDate.ToShortDateString()</td>
+                <td>@item.EndDate.ToShortDateString()</td>
+                <td>
+                    @Html.ActionLink("Edit Settings", "Edit", "Tournament", new { id = item.TournamentId }, null) |
+                    @Html.ActionLink("Delete", "Delete", "Tournament", new { id = item.TournamentId }, null)
+                </td>
+            </tr>
+        }
+        </table>
     </li>
     <li class="two">
         <h5>Set Up New Tournament</h5>

@@ -1,0 +1,93 @@
+﻿@model WKSADB.GrandChampion
+
+@{
+    ViewBag.Title = "Create";
+}
+
+<h2>Create</h2>
+
+<script src="@Url.Content("~/Scripts/jquery.validate.min.js")"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")"></script>
+<script type="text/javascript">
+    $(function () {
+        $('#Gender, #RankId, #DivisionTypeId, #AgeGroupId').change(function () {
+            var description = '';
+
+            if ($('#Gender').val() && $('#Gender').val() != '') {
+                description = $('#Gender option:selected').text() + ' ';
+            }
+
+            description += $('#RankId option:selected').text();
+
+            if ($('#AgeGroupId').val()) {
+                description += ' (' + $('#AgeGroupId option:selected').text() + ')';
+            }
+
+            $('#Description').val(description);
+        });
+    });
+</script>
+
+@using (Html.BeginForm()) {
+    @Html.ValidationSummary(true)
+
+    <fieldset>
+        <legend>GrandChampion</legend>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Description)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Description)
+            @Html.ValidationMessageFor(model => model.Description)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.RankId, "Rank")
+        </div>
+        <div class="editor-field">
+            @Html.DropDownList("RankId", String.Empty)
+            @Html.ValidationMessageFor(model => model.RankId)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.FromAge)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.FromAge)
+            @Html.ValidationMessageFor(model => model.FromAge)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.ToAge)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.ToAge)
+            @Html.ValidationMessageFor(model => model.ToAge)
+        </div>
+        
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Gender)
+        </div>
+        <div class="editor-field">
+            @Html.DropDownList("Gender")
+            @Html.ValidationMessageFor(model => model.Gender)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.DivisionCount)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.DivisionCount)
+            @Html.ValidationMessageFor(model => model.DivisionCount)
+        </div>
+
+        <p>
+            <input type="submit" value="Create" />
+        </p>
+    </fieldset>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>

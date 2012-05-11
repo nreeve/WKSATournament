@@ -14,7 +14,6 @@ namespace WKSATournament.Controllers
         public string ErrorMessage { get; set; }
         public int DivisionId { get; set; }
         public string DivisionName { get; set; }
-        public int TournamentDivisionId { get; set; }
     }
 
     public class DivisionController : Controller
@@ -96,24 +95,20 @@ namespace WKSATournament.Controllers
         {
             JsonTournamentDivision jsonTournamentDivision = new JsonTournamentDivision();
 
-            if (db.TournamentDivisions.Any(m => m.TournamentId == tournamentId && m.Division.DivisionTypeId == divisionTypeId && m.Division.RankId == rankId && ((!m.Division.AgeGroup.FromAge.HasValue || m.Division.AgeGroup.FromAge.Value < age) && (!m.Division.AgeGroup.ToAge.HasValue || m.Division.AgeGroup.ToAge.Value > age)) && (string.IsNullOrEmpty(m.Division.Gender) || m.Division.Gender.Equals(gender))))
+            if (db.TournamentDivisions.Any(m => m.TournamentId == tournamentId && m.Division.DivisionTypeId == divisionTypeId && m.Division.RankId == rankId && ((!m.Division.AgeGroup.FromAge.HasValue || m.Division.AgeGroup.FromAge.Value <= age) && (!m.Division.AgeGroup.ToAge.HasValue || m.Division.AgeGroup.ToAge.Value >= age)) && (string.IsNullOrEmpty(m.Division.Gender) || m.Division.Gender.Equals(gender))))
             {
-                TournamentDivision tournamentDivision = db.TournamentDivisions.Single(m => m.TournamentId == tournamentId && m.Division.DivisionTypeId == divisionTypeId && m.Division.RankId == rankId && ((!m.Division.AgeGroup.FromAge.HasValue || m.Division.AgeGroup.FromAge < age) && (!m.Division.AgeGroup.ToAge.HasValue || m.Division.AgeGroup.ToAge > age)) && (string.IsNullOrEmpty(m.Division.Gender) || m.Division.Gender.Equals(gender)));
+                TournamentDivision tournamentDivision = db.TournamentDivisions.Single(m => m.TournamentId == tournamentId && m.Division.DivisionTypeId == divisionTypeId && m.Division.RankId == rankId && ((!m.Division.AgeGroup.FromAge.HasValue || m.Division.AgeGroup.FromAge <= age) && (!m.Division.AgeGroup.ToAge.HasValue || m.Division.AgeGroup.ToAge >= age)) && (string.IsNullOrEmpty(m.Division.Gender) || m.Division.Gender.Equals(gender)));
 
-                jsonTournamentDivision.TournamentDivisionId = tournamentDivision.TournamentEventId;
                 jsonTournamentDivision.DivisionId = tournamentDivision.DivisionId;
                 jsonTournamentDivision.DivisionName = tournamentDivision.Division.DivisionName;
             }
             else
             {
-                jsonTournamentDivision.ErrorMessage = "No divisions found";
+                jsonTournamentDivision.ErrorMessage = "No Divisions Found For This Rank/Age/Gender Combo";
             }
 
             return Json(jsonTournamentDivision, JsonRequestBehavior.AllowGet);
         }
-
-        //
-        // GET: /Division/Edit/5
 
         public ActionResult Edit(int id = 0)
         {
@@ -128,9 +123,7 @@ namespace WKSATournament.Controllers
             return View(division);
         }
 
-        //
-        // POST: /Division/Edit/5
-
+        //TODO: Add total to results and make it searchable with >, <
         [HttpPost]
         public ActionResult Edit(Division division)
         {

@@ -13,7 +13,7 @@
         <header>
             <div class="content-wrapper">
                 <div class="float-left">
-                    <p class="site-title">@Html.ActionLink("your logo here.", "Index", "Home")</p>
+                    <p class="site-title">@Html.ActionLink("WKSA Tournament Management", "Index", "Home")</p>
                 </div>
                 <div class="float-right">
                     <section id="login">
@@ -26,7 +26,6 @@
                         @if(User.IsInRole("Administrators")){
                             <li>@Html.ActionLink("Admin", "Admin", "Home")</li>
                         }
-                            <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
                         </ul>
                     </nav>
                 </div>

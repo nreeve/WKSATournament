@@ -1,52 +1,311 @@
 ﻿@model WKSADB.Competitor
 
 @{
-    ViewBag.Title = "Edit";
+    string pageTitle = "Add Competitor";
+    if (Model != null)
+    {
+        pageTitle = "Edit Competitor";
+    }
+    ViewBag.Title = pageTitle;
 }
 
-<h2>Edit</h2>
+@section featured {
+    @Html.Partial("TournamentStats", (TournamentStats)ViewBag.TournamentStats)
+}
 
 <script src="@Url.Content("~/Scripts/jquery.validate.min.js")"></script>
 <script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")"></script>
+<script type="text/javascript">
+    var tournamentId = @ViewBag.TournamentId;
+    var tournamentStartDate = new Date("@ViewBag.TournamentStartDate");
+    var searchForStudents = true;
+
+    function detailsEntered() {
+        if ($("#Age").val()=="" || $("#RankId").val()=="" || $("#Gender").val()=="") {
+            return false;
+        }
+
+        return true;
+    }
+
+    function calculateAge(dateOfBirth){
+        age = ((tournamentStartDate.getMonth() > dateOfBirth.getMonth()) || (tournamentStartDate.getMonth() == dateOfBirth.getMonth() && tournamentStartDate.getDate() >= dateOfBirth.getDate())) ? tournamentStartDate.getFullYear() - dateOfBirth.getFullYear() : tournamentStartDate.getFullYear() - dateOfBirth.getFullYear()-1;
+
+        if(!isNaN(age)){
+            $("#Age").val(age);
+        }
+    }
+
+    $(document).ready(function () {
+        $('.date').datepicker({
+            changeYear: true,
+            changeMonth: true,
+            yearRange: "1900",
+            dateFormat: "dd/mm/yy",
+            onClose: function(){
+                calculateAge($('#Student_DateOfBirth').datepicker("getDate"));
+            }
+        });
+        
+        $('#Student_WKSAId, #Student_BlackBeltId, #Student_SchoolId, #Student_FirstName, #Student_LastName').blur(function() {
+            if(searchForStudents){
+                $.ajax(
+                {
+                    type: "GET",
+                    url: "/Student/GetStudentByInfo",
+                    data:
+                    {
+                        WKSAId: $("#Student_WKSAId").val(),
+                        BlackBeltId: $("#Student_BlackBeltId").val(),
+                        SchoolId: $("#Student_SchoolId").val(),
+                        FirstName: $("#Student_FirstName").val(),
+                        LastName: $("#Student_LastName").val()
+                    },
+                    success: function (data) {
+                        if(data){
+                            var studentList = "<ul>";
+
+                            $(data).each(function() {
+                                studentList += "<li><a data-studentid=\"" + this.StudentId + "\" data-wksaid=\"" + this.WKSAId + "\" data-blackbeltid=\"" + this.BlackBeltId + "\" data-schoolid=\"" + this.SchoolId + "\" data-firstname=\"" + this.FirstName + "\" data-lastname=\"" + this.LastName + "\" data-rankid=\"" + this.RankId + "\" data-dateofbirth=\"" + this.DateOfBirth + "\" data-gender=\"" + this.Gender + "\" href=\"#\">" + this.FirstName + " " + this.LastName + " (" + this.SchoolName + ")</a></li>";
+                            });
+
+                            studentList += "</ul>";
+
+                            $("#suggestedStudents").html(studentList);
+
+                            $("#suggestedStudents").effect("highlight", {}, 3000);
+
+                            searchForStudents = false;
+                        }
+                    },
+                    error: function (req, status, error) {
+                        alert("Error: " + req.responseText);
+                    }
+                });
+            }
+        });
+
+        $('#WKSAId, #BlackBeltId, #FirstName, #LastName').change(function() {
+            searchForStudents = true;
+        });
+
+        $("#suggestedStudents a").live('click', function (event) {
+            $("#Student_StudentId").val($(this).data("studentid"));
+            $("#Student_WKSAId").val($(this).data("wksaid"));
+            $("#Student_BlackBeltId").val($(this).data("blackbeltid"));
+            $("#Student_SchoolId").val($(this).data("schoolid"));
+            $("#Student_FirstName").val($(this).data("firstname"));
+            $("#Student_LastName").val($(this).data("lastname"));
+            $("#Student_RankId").val($(this).data("rankid"));
+            $("#Student_DateOfBirth").val($(this).data('dateofbirth'));
+            $('input[name="Student.Gender"][value="' + $(this).data('gender') + '"]').prop('checked', true);
+
+            calculateAge(new Date($("#Student_DateOfBirth").val()));
+        });
+
+        $('#divisions input[type=checkbox]').change(function () {
+            var divisionTypeId = $(this).val();
+
+            if ($(this).attr("checked")) {
+                // Check if the required fields for query are entered
+                if (detailsEntered()) {
+                    $.ajax(
+                    {
+                        type: "GET",
+                        url: "/Division/GetDivision",
+                        data:
+                        {
+                            tournamentId: tournamentId,
+                            divisionTypeId: divisionTypeId,
+                            age: $("#Age").val(),
+                            rankId: $("#Student_RankId").val(),
+                            gender: $("input:radio[Student.Gender]:checked").val()                            
+                        },
+                        success: function (data) {
+                            if(data.ErrorMessage){
+                                alert(data.ErrorMessage);
+                                $("#divisionTypeCheckbox" + divisionTypeId).attr("checked", false);
+                            }else{
+                                $("#Divisions\\[" + divisionTypeId + "\\]\\.DivisionId").val(data.DivisionId);
+                                $("#divisionName" + divisionTypeId).html("<a href=\"/TournamentDivision/Edit/" + tournamentId + "?DivisionId=" + data.DivisionId + "\">" + data.DivisionName + "</a>");
+                                $("#divisionName" + divisionTypeId).effect("highlight", {}, 3000);
+                            }
+                        },
+                        error: function (req, status, error) {
+                            alert("Error: " + req.responseText);
+                            $("#divisionTypeCheckbox" + divisionTypeId).attr("checked", false);
+                        }
+                    });
+                } else {
+                    alert("Please enter: Age, Rank and Gender");
+                    $(this).removeAttr("checked");
+                    //event.preventDefault();
+                }
+            } else {
+                var removeTick = true;
+
+                // Remove division if already selected. Not allowed if results entered
+                if($("#Divisions_" + divisionTypeId + "__Result").val()!="")
+                {
+                    if(!confirm("This division has a result saved against it. Are you sure you want to remove it?"))
+                    {
+                        removeTick = false;
+                        $(this).attr("checked", "checked");
+                    }
+                }
+
+                if(removeTick){
+                    $("#Divisions\\[" + divisionTypeId + "\\]\\.DivisionId").val("0");
+                    $("#divisionName" + divisionTypeId).text("Check box to select division");
+                    $("#divisionName" + divisionTypeId).removeClass("bold");
+                }
+            }
+        });
+
+        $(window).keydown(function(event) {
+            var charCode = (event.which) ? event.which : event.keyCode;
+
+            if (event.ctrlKey && (charCode > 48 && charCode < 56)){
+                var $checkbox = $('#divisionTypeCheckbox' + String.fromCharCode(charCode));
+                
+                if($checkbox){
+                    $checkbox.attr('checked', !$checkbox.attr('checked'));
+                    $checkbox.trigger('change');
+                }
+
+                event.preventDefault();
+            }
+        });
+
+        calculateAge(new Date($("#Student_DateOfBirth").val()));
+    });
+</script>
 
 @using (Html.BeginForm()) {
-    @Html.ValidationSummary(true)
+    <article>
+        <h2>@pageTitle</h2>
+        <fieldset>
+            <legend>Competitor Details</legend>
+            @Html.Hidden("CompetitorId", Model == null ? 0 :Model.CompetitorId)
+            @Html.Hidden("TournamentId", Model == null ? 0 :Model.TournamentId)
+            @Html.Hidden("Student.StudentId", Model == null ? 0 : Model.Student.StudentId)
+            <div class="row">
+                <div>
+                    @Html.LabelFor(model => model.Student.WKSAId)
+                    @Html.TextBoxFor(model => model.Student.WKSAId, new { style = "width:100px" })
+                </div>
 
-    <fieldset>
-        <legend>Competitor</legend>
+                <div>
+                    @Html.LabelFor(model => model.Student.BlackBeltId)
+                    @Html.TextBoxFor(model => model.Student.BlackBeltId, new { style = "width:100px" })
+                </div>
 
-        @Html.HiddenFor(model => model.CompetitorId)
+                <div>
+                    @Html.LabelFor(model => model.Student.SchoolId, "School")
+                    @Html.DropDownListFor(model => model.Student.SchoolId, (SelectList)ViewBag.SchoolId, String.Empty)
+                </div>
 
-        <div class="editor-label">
-            @Html.LabelFor(model => model.TournamentId, "Tournament")
-        </div>
-        <div class="editor-field">
-            @Html.DropDownList("TournamentId", String.Empty)
-            @Html.ValidationMessageFor(model => model.TournamentId)
-        </div>
+                <div>
+                    @Html.LabelFor(model => model.Fee)
+                    @Html.TextBoxFor(model => model.Fee, new { style = "width:100px" })
+                </div>
+            </div>
 
-        <div class="editor-label">
-            @Html.LabelFor(model => model.StudentId, "Student")
-        </div>
-        <div class="editor-field">
-            @Html.DropDownList("StudentId", String.Empty)
-            @Html.ValidationMessageFor(model => model.StudentId)
-        </div>
+            <div class="row">
+                <div>
+                    @Html.LabelFor(model => model.Student.FirstName)
+                    @Html.TextBoxFor(model => model.Student.FirstName, new { style = "width:180px" })
+                </div>
 
-        <div class="editor-label">
-            @Html.LabelFor(model => model.Fee)
-        </div>
-        <div class="editor-field">
-            @Html.EditorFor(model => model.Fee)
-            @Html.ValidationMessageFor(model => model.Fee)
-        </div>
+                <div>
+                    @Html.LabelFor(model => model.Student.LastName)
+                    @Html.TextBoxFor(model => model.Student.LastName, new { style = "width:180px" })
+                </div>
 
-        <p>
-            <input type="submit" value="Save" />
-        </p>
-    </fieldset>
+                <div>
+                    @Html.LabelFor(model => model.Student.RankId, "Rank")
+                    @Html.DropDownListFor(model => model.Student.RankId, (SelectList)ViewBag.RankId, String.Empty)
+                </div>
+            </div>
+
+            <div class="row">
+                <div>
+                    @Html.LabelFor(model => model.Student.DateOfBirth)
+                    @Html.EditorFor(model => model.Student.DateOfBirth, new { style = "width:100px" })
+                </div>
+
+                <div>
+                    @Html.Label("Age (at Tournament)")
+                    @Html.TextBox("Age", string.Empty, new { style = "width:100px" })
+                </div>
+
+                <div style="margin-top:29px;">
+                    @Html.Label("Male", new { style = "float:left" })
+                    @Html.RadioButtonFor(model => model.Student.Gender, "M", new { style = "float:left" })
+                    @Html.Label("Female", new { style = "float:left; margin-left:20px;" })
+                    @Html.RadioButtonFor(model => model.Student.Gender, "F", new { style = "float:left" })
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>Divisions</legend>
+
+            <div id="divisions" class="row">
+                <h3>DIVISIONS (Use Ctrl + Number Keys to select division e.g. Ctrl + '1' adds Forms)</h3>
+                <table style="width:600px;">
+                    <thead>
+                        <tr>
+                            <th style="width:100px;">&nbsp;</th>
+                            <th style="width:50px;">&nbsp;</th>
+                            <th>&nbsp;</th>
+                            <th style="width:100px;">Pts.</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (DivisionType divisionType in ViewBag.DivisionTypes){
+                        CompetitorDivision competitorDivision = new CompetitorDivision();
+
+                        if (Model!=null && Model.CompetitorDivisions.Any(m => m.Division.DivisionTypeId == divisionType.DivisionTypeId))
+                        {
+                            competitorDivision = Model.CompetitorDivisions.Single(m => m.Division.DivisionTypeId == divisionType.DivisionTypeId);
+                        }
+                    <tr>
+                        <td>@divisionType.DivisionTypeId . @divisionType.Description</td>
+                        <td>
+
+                            <input type="hidden" id="Divisions.Index" name="Divisions.Index" value="@(divisionType.DivisionTypeId)" />
+                            <input type="hidden" id="Divisions[@(divisionType.DivisionTypeId)].DivisionId" name="Divisions[@(divisionType.DivisionTypeId)].DivisionId" value="@competitorDivision.DivisionId" />
+                            <input type="checkbox" id="divisionTypeCheckbox@(divisionType.DivisionTypeId)" name="divisionTypeCheckbox@(divisionType.DivisionTypeId)" style="float:left;" value="@divisionType.DivisionTypeId" @(competitorDivision.DivisionId !=0 ? "checked='checked'" : string.Empty) />
+                        </td>
+                        <td style="font-style:italic;" id="divisionName@(divisionType.DivisionTypeId)">
+                            @if(competitorDivision.DivisionId != 0)
+                            {
+                                @Html.ActionLink(competitorDivision.Division.DivisionName, "Edit", "TournamentDivision", new { id = Model.TournamentId, DivisionId = competitorDivision.DivisionId}, null)
+                            }
+                            else
+                            {
+                                @:Check box to select division
+                            }
+                        </td>
+                        <td align="center">@Html.TextBox("Divisions[" + divisionType.DivisionTypeId + "].Result", competitorDivision.Result, new { @class = "resultTextBox"})</td>
+                    </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+            <p style="float:left;">
+                <input type="submit" value="Save" />
+            </p>
+        </fieldset>
+        <div>
+            @Html.ActionLink("Back to List", "Index")
+        </div>
+    </article>
+    <aside>
+        @Html.ValidationSummary("The following errors have occurred:")
+        <h3>SUGGESTED STUDENTS</h3>
+        <div id="suggestedStudents">
+        </div>
+    </aside>
 }
-
-<div>
-    @Html.ActionLink("Back to List", "Index")
-</div>

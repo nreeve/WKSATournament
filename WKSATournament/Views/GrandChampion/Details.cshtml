@@ -1,0 +1,50 @@
+﻿@model WKSADB.GrandChampion
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<fieldset>
+    <legend>GrandChampion</legend>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.Description)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Description)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.Rank.Description)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Rank.Description)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.AgeGroup.Description)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.AgeGroup.Description)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.Gender)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Gender)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.DivisionCount)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.DivisionCount)
+    </div>
+</fieldset>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id=Model.GrandChampionId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

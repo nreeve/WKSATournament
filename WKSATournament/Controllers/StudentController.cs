@@ -9,6 +9,21 @@ using WKSADB;
 
 namespace WKSATournament.Controllers
 {
+    public class JsonStudent
+    {
+        public int StudentId { get; set; }
+        public string WKSAId { get; set; }
+        public string BlackBeltId { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public int RankId { get; set; }
+        public int SchoolId { get; set; }
+        public string SchoolCode { get; set; }
+        public string SchoolName { get; set; }
+        public string DateOfBirth { get; set; }
+        public string Gender { get; set; }
+    }
+    
     public class StudentController : Controller
     {
         private WKSAEntities db = new WKSAEntities();
@@ -65,6 +80,64 @@ namespace WKSATournament.Controllers
             return View(student);
         }
 
+        public JsonResult GetStudentByInfo(string WKSAId, string BlackBeltId, int? SchoolId, string FirstName, string LastName)
+        {
+            bool found = false;
+            IEnumerable<Student> studentList = db.Students.AsEnumerable();
+            
+            if (!string.IsNullOrWhiteSpace(WKSAId))
+            {
+                studentList = studentList.Where(m => (m.WKSAId ?? string.Empty).Equals(WKSAId));
+                found = true;
+            }
+
+            if (!string.IsNullOrWhiteSpace(BlackBeltId))
+            {
+                studentList = studentList.Where(m => (m.BlackBeltId ?? string.Empty).Equals(BlackBeltId));
+                found = true;
+            }
+
+            if (SchoolId.HasValue)
+            {
+                studentList = studentList.Where(m => m.SchoolId == SchoolId.Value);
+                found = true;
+            }
+
+            if (!string.IsNullOrWhiteSpace(FirstName))
+            {
+                studentList = studentList.Where(m => m.FirstName.ToLower().Contains(FirstName.ToLower()));
+                found = true;
+            }
+
+            if (!string.IsNullOrWhiteSpace(LastName))
+            {
+                studentList = studentList.Where(m => m.LastName.ToLower().Contains(LastName.ToLower()));
+                found = true;
+            }
+
+            if (found)
+            {
+                return Json(studentList.Select(student => new JsonStudent
+                    {
+                        StudentId = student.StudentId,
+                        WKSAId = student.WKSAId,
+                        BlackBeltId = student.BlackBeltId,
+                        FirstName = student.FirstName,
+                        LastName = student.LastName,
+                        RankId  = student.RankId,
+                        SchoolId = student.School.SchoolId,
+                        SchoolCode = student.School.SchoolCode,
+                        SchoolName = student.School.SchoolName,
+                        Gender = student.Gender,
+                        DateOfBirth = student.DateOfBirth.HasValue ? student.DateOfBirth.Value.ToString("dd/MM/yyyy") : null
+                    }).OrderBy(m => m.FirstName).ThenBy(m => m.LastName).ThenBy(m => m.SchoolName), JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                return null;
+            }
+        }
+        
         //
         // GET: /Student/Edit/5
 

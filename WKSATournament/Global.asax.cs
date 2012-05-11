@@ -13,6 +13,12 @@ namespace WKSATournament
     // Note: For instructions on enabling IIS6 or IIS7 classic mode, 
     // visit http://go.microsoft.com/?LinkId=9394801
 
+/*cd to your project directory
+git remote origin add <url-to-repository> | make sure it's the read-write URL from github, something like "git@github.com hilbo/7digital-finder.git"
+git add -A | stages all changes
+git commit -m "some commit message"
+git push origin master*/
+
     public class MvcApplication : System.Web.HttpApplication
     {
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
@@ -45,7 +51,7 @@ namespace WKSATournament
             RegisterGlobalFilters(GlobalFilters.Filters);
             RegisterRoutes(RouteTable.Routes);
 
-            BundleTable.Bundles.RegisterTemplateBundles();
+            BundleTable.Bundles.EnableDefaultBundles();
         }
     }
 }

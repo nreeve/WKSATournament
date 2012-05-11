@@ -74,3 +74,4 @@ C:\Users\nreeve\WKSATournament\WKSATournament\bin\System.Web.WebPages.Razor.xml
 C:\Users\nreeve\WKSATournament\WKSATournament\obj\Debug\ResolveAssemblyReference.cache
 C:\Users\nreeve\WKSATournament\WKSATournament\obj\Debug\WKSATournament.dll
 C:\Users\nreeve\WKSATournament\WKSATournament\obj\Debug\WKSATournament.pdb
+C:\Users\nreeve\WKSATournament\WKSATournament\bin\Lib.Web.Mvc.xml

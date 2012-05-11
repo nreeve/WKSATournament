@@ -6,6 +6,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using WKSADB;
+using Lib.Web.Mvc.JQuery.JqGrid;
 
 namespace WKSATournament.Controllers
 {
@@ -119,6 +120,45 @@ namespace WKSATournament.Controllers
             db.Schools.DeleteObject(school);
             db.SaveChanges();
             return RedirectToAction("Index");
+        }
+
+        [AcceptVerbs(HttpVerbs.Post)]
+        public ActionResult GridData(JqGridRequest request, int id)
+        {
+            //IQueryable<Competitor> competitors = db.Competitors.Where(m => m.TournamentId == id);
+            var schools = db.Competitors.Where(m => m.TournamentId == id).ToLookup(m => m.Student.SchoolId).OrderByDescending(m => m.Sum(c => c.CompetitorDivisions.Sum(cd => cd.Result)));
+
+            int totalRecords = schools.Count();
+
+            //Prepare JqGridData instance
+            JqGridResponse response = new JqGridResponse()
+            {
+                //Total pages count
+                TotalPagesCount = (int)Math.Ceiling((float)totalRecords / (float)request.RecordsCount),
+                //Page number
+                PageIndex = request.PageIndex,
+                //Total records count
+                TotalRecordsCount = totalRecords
+            };
+
+            //Table with rows data
+            foreach (IGrouping<int, Competitor> schoolCompetitors in schools.Skip(request.PageIndex * request.RecordsCount).Take(request.PagesCount.HasValue ? request.PagesCount.Value : 1 * request.RecordsCount))
+            {
+                School school = schoolCompetitors.First().Student.School;
+                string TotalPoints = schoolCompetitors.Sum(s => s.CompetitorDivisions.Sum(cd => cd.Result)).ToString();
+
+                response.Records.Add(new JqGridRecord(Convert.ToString(school.SchoolId), new List<object>()
+                {
+                    school.SchoolId,
+                    school.SchoolCode,
+                    school.SchoolName,
+                    school.InstructorName,
+                    TotalPoints
+                }));
+            }
+
+            //Return data as json
+            return new JqGridJsonResult() { Data = response };
         }
 
         protected override void Dispose(bool disposing)
