@@ -1,0 +1,50 @@
+﻿@model WKSADB.School
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<fieldset>
+    <legend>School</legend>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.SchoolCode)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.SchoolCode)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.SchoolName)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.SchoolName)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.Country.CountryName)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Country.CountryName)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.InstructorName)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.InstructorName)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.Student.WKSAId)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Student.WKSAId)
+    </div>
+</fieldset>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id=Model.SchoolId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

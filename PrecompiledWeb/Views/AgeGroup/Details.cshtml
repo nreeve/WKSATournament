@@ -1,0 +1,43 @@
+﻿@model WKSADB.AgeGroup
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<fieldset>
+    <legend>AgeGroup</legend>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.Description)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Description)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.FromAge)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.FromAge)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.ToAge)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.ToAge)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.IsSparringGroup)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.IsSparringGroup)
+    </div>
+</fieldset>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id=Model.AgeGroupId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

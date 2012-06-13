@@ -1,0 +1,37 @@
+﻿@model WKSADB.Venue
+@using WKSATournament.Models
+
+@{
+    ViewBag.Title = "Create";
+}
+
+<h2>Create</h2>
+
+<script src="@Url.Content("~/Scripts/jquery.validate.min.js")"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")"></script>
+
+@using (Html.BeginForm((string)ViewBag.FormAction, "Venue")) {
+    @Html.ValidationSummary(true)
+
+    <fieldset>
+        <legend>Venue</legend>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.VenueName)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.VenueName)
+            @Html.ValidationMessageFor(model => model.VenueName)
+        </div>
+
+        @Html.Partial("Address", new Address { })
+
+        <p>
+            <input type="submit" value="Create" />
+        </p>
+    </fieldset>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>

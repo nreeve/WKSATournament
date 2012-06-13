@@ -151,6 +151,7 @@
     <Compile Include="Extensions\iTextSharpHelper.cs" />
     <Compile Include="Extensions\JQGridExtensions.cs" />
     <Compile Include="Extensions\LinqEntensions.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -197,20 +198,6 @@
     <Content Include="Content\themes\base\jquery.ui.tabs.css" />
     <Content Include="Content\themes\base\jquery.ui.theme.css" />
     <Content Include="Content\themes\cupertino\jquery-ui-1.8.18.custom.css" />
-    <Content Include="Content\themes\cupertino\jquery.ui.accordion.css" />
-    <Content Include="Content\themes\cupertino\jquery.ui.all.css" />
-    <Content Include="Content\themes\cupertino\jquery.ui.autocomplete.css" />
-    <Content Include="Content\themes\cupertino\jquery.ui.base.css" />
-    <Content Include="Content\themes\cupertino\jquery.ui.button.css" />
-    <Content Include="Content\themes\cupertino\jquery.ui.core.css" />
-    <Content Include="Content\themes\cupertino\jquery.ui.datepicker.css" />
-    <Content Include="Content\themes\cupertino\jquery.ui.dialog.css" />
-    <Content Include="Content\themes\cupertino\jquery.ui.progressbar.css" />
-    <Content Include="Content\themes\cupertino\jquery.ui.resizable.css" />
-    <Content Include="Content\themes\cupertino\jquery.ui.selectable.css" />
-    <Content Include="Content\themes\cupertino\jquery.ui.slider.css" />
-    <Content Include="Content\themes\cupertino\jquery.ui.tabs.css" />
-    <Content Include="Content\themes\cupertino\jquery.ui.theme.css" />
     <Content Include="Content\ui.jqgrid.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
@@ -335,9 +322,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Division\Details.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Views\Division\Create.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Division\Edit.cshtml" />
@@ -465,6 +449,12 @@
   <ItemGroup>
     <Content Include="Views\GrandChampion\Delete.cshtml" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\TournamentDivision\EditOlympic.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\TournamentDivision\EditOlympicCompetitor.cshtml" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -482,7 +472,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>14821</DevelopmentServerPort>
+          <DevelopmentServerPort>32086</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>

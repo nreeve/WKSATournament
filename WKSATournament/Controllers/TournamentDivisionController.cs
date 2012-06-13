@@ -67,13 +67,14 @@ namespace WKSATournament.Controllers
         public ActionResult Edit(int id = 0, int divisionId = 0)
         {
             TournamentDivision tournamentdivision = db.TournamentDivisions.Single(t => t.TournamentId == id && t.DivisionId == divisionId);
+
             if (tournamentdivision == null)
             {
                 return HttpNotFound();
             }
-            
+
             InitViewBag(tournamentdivision);
-            return View(tournamentdivision);
+            return View(tournamentdivision.Division.IsOlympicDivision ? "EditOlympic": "Edit", tournamentdivision);
         }
 
         [HttpPost]
@@ -97,6 +98,73 @@ namespace WKSATournament.Controllers
             return View(tournamentdivision);
         }
 
+        public ActionResult EditOlympic(int id = 0, int divisionId = 0)
+        {
+            TournamentDivision tournamentdivision = db.TournamentDivisions.Single(t => t.TournamentId == id && t.DivisionId == divisionId);
+
+            if (tournamentdivision == null)
+            {
+                return HttpNotFound();
+            }
+
+            InitViewBag(tournamentdivision);
+            return View(tournamentdivision);
+        }
+
+        public ActionResult EditOlympicCompetitor(int competitorId = 0, int divisionId = 0)
+        {
+            Competitor competitor = db.Competitors.Single(m => m.CompetitorId == competitorId);
+
+            TournamentDivision tournamentdivision = db.TournamentDivisions.Single(t => t.TournamentId == competitor.TournamentId && t.DivisionId == divisionId);
+            ViewBag.Competitor = competitor;
+            ViewBag.HyungBup = db.HyungBups;
+
+            if (tournamentdivision == null)
+            {
+                return HttpNotFound();
+            }
+
+            InitViewBag(tournamentdivision);
+            return View(tournamentdivision);
+        }
+
+        [HttpPost]
+        public ActionResult EditOlympicCompetitor(CompetitorDivision competitorDivision, List<CompetitorOlympicDivisionStep> OlympicDivisionSteps, List<CompetitorOlympicDivisionHyungBup> OlympicDivisionHyungBup)
+        {
+            Competitor competitor = db.Competitors.Single(m => m.CompetitorId == competitorDivision.CompetitorId);
+
+            CompetitorDivision competitorDivisionToSave = competitor.CompetitorDivisions.Single(m => m.DivisionId == competitorDivision.DivisionId);
+            competitorDivisionToSave.Judge1 = competitorDivision.Judge1;
+            competitorDivisionToSave.Judge2 = competitorDivision.Judge2;
+            competitorDivisionToSave.Judge3 = competitorDivision.Judge3;
+            competitorDivisionToSave.Judge4 = competitorDivision.Judge4;
+            competitorDivisionToSave.Judge5 = competitorDivision.Judge5;
+            competitorDivisionToSave.TechnicalScore = competitorDivision.TechnicalScore;
+            competitorDivisionToSave.HyungBupScore = competitorDivision.HyungBupScore;
+            competitorDivisionToSave.TotalScore = competitorDivision.TotalScore;
+
+            db.DeleteCompetitorOlympicSteps(competitorDivision.CompetitorId, competitorDivision.DivisionId);
+            foreach (CompetitorOlympicDivisionStep olympicDivisionStep in OlympicDivisionSteps.Where(m => m.Total != 0))
+            {
+                competitor.CompetitorOlympicDivisionSteps.Add(olympicDivisionStep);
+            }
+
+            foreach (CompetitorOlympicDivisionHyungBup olympicDivisionHyungBup in OlympicDivisionHyungBup.Where(m => m.Total != 0))
+            {
+                competitor.CompetitorOlympicDivisionHyungBups.Add(olympicDivisionHyungBup);
+            }
+
+            db.ObjectStateManager.ChangeObjectState(competitor, EntityState.Modified);
+            db.SaveChanges();
+
+
+            return RedirectToAction("EditOlympic", new { id = competitor.TournamentId, divisionId = competitorDivision.DivisionId });
+
+            /*TournamentDivision tournamentDivision = db.TournamentDivisions.Single(t => t.TournamentId == competitor.TournamentId && t.DivisionId == divisionId);
+            InitViewBag(tournamentDivision);
+            return View("EditOlympic", tournamentDivision);*/
+        }
+        
         [AcceptVerbs(HttpVerbs.Post)]
         public ActionResult GridData(JqGridRequest request, int id)
         {
@@ -164,7 +232,7 @@ namespace WKSATournament.Controllers
 
         private void InitViewBag(TournamentDivision tournamentdivision)
         {
-            ViewBag.Competitors = db.CompetitorDivisions.Where(m => m.DivisionId == tournamentdivision.DivisionId && m.Competitor.TournamentId == tournamentdivision.TournamentId);
+            ViewBag.Competitors = db.CompetitorDivisions.Where(m => m.DivisionId == tournamentdivision.DivisionId && m.Competitor.TournamentId == tournamentdivision.TournamentId).OrderBy(m => m.Competitor.Student.FirstName).ThenBy(m => m.Competitor.Student.LastName);
             ViewBag.DivisionId = new SelectList(db.Divisions, "DivisionId", "DivisionName", tournamentdivision.DivisionId);
             ViewBag.TournamentId = new SelectList(db.Tournaments, "TournamentId", "TournamentName", tournamentdivision.TournamentId);
 

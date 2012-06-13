@@ -1,0 +1,71 @@
+﻿@model WKSADB.AgeGroup
+
+@{
+    ViewBag.Title = "Create";
+}
+
+<h2>Create</h2>
+
+<script src="@Url.Content("~/Scripts/jquery.validate.min.js")"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")"></script>
+<script type="text/javascript">
+    $(function () {
+        $('#FromAge, #ToAge').blur(function () {
+            if ($('#FromAge').val() && $('#ToAge').val()) {
+                $('#Description').val($('#FromAge').val() + ' - ' + $('#ToAge').val());
+            } else if ($('#FromAge').val() && !$('#ToAge').val()) {
+                $('#Description').val($('#FromAge').val() + ' and above');
+            } else if (!$('#FromAge').val() && $('#ToAge').val()) {
+                $('#Description').val($('#ToAge').val() + ' and under');
+            }
+        });
+    });
+</script>
+
+@using (Html.BeginForm()) {
+    @Html.ValidationSummary(true)
+
+    <fieldset>
+        <legend>AgeGroup</legend>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Description)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Description)
+            @Html.ValidationMessageFor(model => model.Description)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.FromAge)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.FromAge)
+            @Html.ValidationMessageFor(model => model.FromAge)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.ToAge)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.ToAge)
+            @Html.ValidationMessageFor(model => model.ToAge)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.IsSparringGroup)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.IsSparringGroup)
+            @Html.ValidationMessageFor(model => model.IsSparringGroup)
+        </div>
+
+        <p>
+            <input type="submit" value="Create" />
+        </p>
+    </fieldset>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>

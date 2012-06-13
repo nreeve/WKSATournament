@@ -72,7 +72,7 @@ namespace WKSATournament.Controllers
                     fillAttendByRankTable(ageGroupDivisions.Where(m => !m.Division.AgeGroup.IsSparringGroup).ToLookup(m => m.DivisionId), rankTable);
                     
                     // Include child age groups for sparring
-                    fillAttendByRankTable(db.CompetitorDivisions.Where(m => m.Competitor.TournamentId == tournamentId && m.Division.AgeGroup.ParentAgeGroupId == ageGroup.AgeGroupId).ToLookup(m => m.DivisionId), rankTable);
+                    fillAttendByRankTable(db.CompetitorDivisions.Where(m => m.Competitor.TournamentId == tournamentId && m.Division.RankId == rank.RankId & m.Division.AgeGroup.ParentAgeGroupId == ageGroup.AgeGroupId).ToLookup(m => m.DivisionId), rankTable);
                 }
 
                 document.Add(rankTable);
@@ -163,7 +163,10 @@ namespace WKSATournament.Controllers
                         document.NewPage();
                         pageEventHandler.ShowFooter = true;
 
-                        createEventSheet(id, tournamentDivision);
+                        if (db.CompetitorDivisions.Any(m => m.Competitor.TournamentId == id && m.DivisionId == tournamentDivision.DivisionId))
+                        {
+                            createEventSheet(id, tournamentDivision);
+                        }
                     }
                 }
             }
@@ -191,6 +194,7 @@ namespace WKSATournament.Controllers
             string reportFilename = string.Empty;
 
             ILookup<int, Competitor> competitorList = db.Competitors.Where(m => m.TournamentId == tournamentId).ToLookup(m => m.Student.SchoolId);
+
             IOrderedEnumerable<IGrouping<int, Competitor>> schools = null;
 
             switch (reportType)
@@ -214,7 +218,17 @@ namespace WKSATournament.Controllers
 
             document.Add(headerTable);
 
-            PdfPTable schoolTable = new PdfPTable(reportType == Constants.ReportType.Financial ? 5 : 4);
+            int colCount = 4;
+            if (reportType == Constants.ReportType.Financial)
+            {
+                colCount = 5;
+            }
+            else if(reportType == Constants.ReportType.SchoolPlaces)
+            {
+                colCount = 6;
+            }
+
+            PdfPTable schoolTable = new PdfPTable(colCount);
             schoolTable.SpacingBefore = 10f;
             schoolTable.HorizontalAlignment = Element.ALIGN_LEFT;
             schoolTable.DefaultCell.Border = Rectangle.NO_BORDER;
@@ -227,6 +241,9 @@ namespace WKSATournament.Controllers
 
             if (reportType == Constants.ReportType.SchoolPlaces)
             {
+                schoolTable.SetWidths(new float[] { 10, 20, 30, 15, 10, 15 });
+                schoolTable.AddCell(new Phrase("Competitors", fontTableHeader));
+                schoolTable.AddCell(new Phrase("Average", fontTableHeader));
                 schoolTable.AddCell(new Phrase("Total Points", fontTableHeader));
             }
             else
@@ -249,7 +266,13 @@ namespace WKSATournament.Controllers
 
                 if (reportType == Constants.ReportType.SchoolPlaces)
                 {
-                    schoolTable.AddCell(new Phrase(schoolCompetitors.Sum(c => c.CompetitorDivisions.Sum(cd => cd.Result)).ToString(), fontNormal));
+                    int CompetitorCount = schoolCompetitors.Count();
+                    int? TotalPoints = schoolCompetitors.Sum(s => s.CompetitorDivisions.Sum(cd => cd.Result));
+                    decimal Average = TotalPoints.HasValue ? TotalPoints.Value / CompetitorCount : 0;
+
+                    schoolTable.AddCell(new Phrase(CompetitorCount.ToString(), fontNormal));
+                    schoolTable.AddCell(new Phrase(Average.ToString(), fontNormal));
+                    schoolTable.AddCell(new Phrase(TotalPoints.ToString(), fontNormal));
                 }
                 else
                 {
@@ -261,7 +284,17 @@ namespace WKSATournament.Controllers
                     schoolTable.AddCell(new Phrase(schoolCompetitors.Sum(m => m.Fee).ToString("c"), fontNormal));
                 }
             }
-
+            
+            // Add total row for Financial Report
+            if (reportType == Constants.ReportType.Financial)
+            {
+                schoolTable.AddCell(new Phrase(string.Empty, fontNormal));
+                schoolTable.AddCell(new Phrase(string.Empty, fontNormal));
+                schoolTable.AddCell(new Phrase(string.Empty, fontNormal));
+                schoolTable.AddCell(new Phrase("Total", fontNormal));
+                schoolTable.AddCell(new Phrase(db.Competitors.Where(m => m.TournamentId == tournamentId).Sum(m => m.Fee).ToString("c"), fontNormal));
+            }
+            
             document.Add(schoolTable);
 
             document.Close();
@@ -283,18 +316,16 @@ namespace WKSATournament.Controllers
             headerTable.AddCell(Image.GetInstance(Server.MapPath("/Content/images/reportLogo.gif")));
             headerTable.AddCell(new Phrase(tournamentDivision.Division.DivisionName, fontH1));
             headerTable.AddCell("Ring No.:");
-            //TODO: Display event number on report
+
             PdfContentByte pdfContentByte = PDFWriter.DirectContent;
-            Barcode128 code128 = new Barcode128 { Code = string.Format("*{0}*", tournamentDivision.DivisionId), Extended = false, CodeType = Barcode.CODE128, Font = null };
-            Image image128 = code128.CreateImageWithBarcode(pdfContentByte, null, null);
+            Barcode128 code128 = new Barcode128 { Code = string.Format("*{0}*", tournamentDivision.DivisionId), Extended = false, CodeType = Barcode.CODE128/*, Font = null*/ };
             headerTable.AddCell(code128.CreateImageWithBarcode(pdfContentByte, null, null));
 
             document.Add(headerTable);
-            //document.Add(new Paragraph("Please ensure that you complete this form (including the placings section at the bottom)"));
 
-            //TODO: Sparring specific sheet needs bye sheet at the top
             if (tournamentDivision.Division.DivisionTypeId == WKSADBConstants.DivisionType_SparringId)
             {
+                //document.SetMargins(27f, 27f, 27f, 27f);
                 PdfPTable table = new PdfPTable(5);
                 table.HorizontalAlignment = Element.ALIGN_LEFT;
                 table.DefaultCell.Border = Rectangle.NO_BORDER;
@@ -302,7 +333,9 @@ namespace WKSATournament.Controllers
                 table.SpacingBefore = 5f;
                 table.SpacingAfter = 5f;
 
-                PdfPCell cell = iTextSharpHelper.CreateCell(string.Format("Competitor List (division requires {0} byes)", getByeCount(competitorDivisions.Count)), new Font(baseFont, 9, Font.BOLD), 0, Element.ALIGN_LEFT, null);
+                int byeCount = getByeCount(competitorDivisions.Count);
+
+                PdfPCell cell = iTextSharpHelper.CreateCell(string.Format("Competitor List (division requires {0} bye{1})", byeCount, byeCount == 1 ? string.Empty : "s"), new Font(baseFont, 9, Font.BOLD), 0, Element.ALIGN_LEFT, null);
                 cell.Colspan = 5;
                 table.AddCell(cell);
 
@@ -319,13 +352,16 @@ namespace WKSATournament.Controllers
 
                 document.Add(table);
 
-                Image sparringTreeImage = Image.GetInstance(Server.MapPath("/Content/images/sparringtreev02.jpg"));
+                Image sparringTreeImage = Image.GetInstance(Server.MapPath("/Content/images/sparringtreev03.jpg"));
                 // Have to scale as it's in 150dpi
                 sparringTreeImage.ScalePercent(48f);
                 document.Add(sparringTreeImage);
+
+                //document.Add(CreateByeChartTable());
             }
             else
             {
+                //document.SetMargins(36f, 36f, 36f, 36f);
                 PdfPTable table = new PdfPTable(13);
                 table.HorizontalAlignment = Element.ALIGN_LEFT;
                 table.DefaultCell.Border = Rectangle.BOTTOM_BORDER;
@@ -369,6 +405,41 @@ namespace WKSATournament.Controllers
             }
         }
 
+        private PdfPTable CreateByeChartTable()
+        {
+            PdfPTable byeChart = new PdfPTable(8);
+            byeChart.HorizontalAlignment = Element.ALIGN_CENTER;
+            byeChart.DefaultCell.Border = Rectangle.NO_BORDER;
+            byeChart.DefaultCell.PaddingBottom = 10f;
+            byeChart.WidthPercentage = 100f;
+            byeChart.SpacingBefore = 35f;
+
+            PdfPCell byeChartHeaderCell = new PdfPCell(new Phrase("Bye Chart ('Competitor Count' = 'Number of Byes'):", new Font(baseFont, 8, Font.BOLD)));
+            byeChartHeaderCell.Colspan = 8;
+            byeChartHeaderCell.HorizontalAlignment = Element.ALIGN_LEFT;
+            byeChartHeaderCell.Border = 0;// Rectangle.LEFT_BORDER | Rectangle.TOP_BORDER | Rectangle.RIGHT_BORDER;
+            byeChart.AddCell(byeChartHeaderCell);
+
+            Font byeChartFont = new Font(baseFont, 8);
+            byeChart.AddCell(iTextSharpHelper.CreateCell("3 = 1", byeChartFont, 0, Element.ALIGN_CENTER, null));
+            byeChart.AddCell(iTextSharpHelper.CreateCell("4 = 0", byeChartFont, 0, Element.ALIGN_CENTER, null));
+            byeChart.AddCell(iTextSharpHelper.CreateCell("5 = 3", byeChartFont, 0, Element.ALIGN_CENTER, null));
+            byeChart.AddCell(iTextSharpHelper.CreateCell("6 = 2", byeChartFont, 0, Element.ALIGN_CENTER, null));
+            byeChart.AddCell(iTextSharpHelper.CreateCell("7 = 1", byeChartFont, 0, Element.ALIGN_CENTER, null));
+            byeChart.AddCell(iTextSharpHelper.CreateCell("8 = 0", byeChartFont, 0, Element.ALIGN_CENTER, null));
+            byeChart.AddCell(iTextSharpHelper.CreateCell("9 = 7", byeChartFont, 0, Element.ALIGN_CENTER, null));
+            byeChart.AddCell(iTextSharpHelper.CreateCell("10 = 6", byeChartFont, 0, Element.ALIGN_CENTER, null));
+            byeChart.AddCell(iTextSharpHelper.CreateCell("11 = 5", byeChartFont, 0, Element.ALIGN_CENTER, null));
+            byeChart.AddCell(iTextSharpHelper.CreateCell("12 = 4", byeChartFont, 0, Element.ALIGN_CENTER, null));
+            byeChart.AddCell(iTextSharpHelper.CreateCell("13 = 3", byeChartFont, 0, Element.ALIGN_CENTER, null));
+            byeChart.AddCell(iTextSharpHelper.CreateCell("14 = 2", byeChartFont, 0, Element.ALIGN_CENTER, null));
+            byeChart.AddCell(iTextSharpHelper.CreateCell("15 = 1", byeChartFont, 0, Element.ALIGN_CENTER, null));
+            byeChart.AddCell(iTextSharpHelper.CreateCell("16 = 0", byeChartFont, 0, Element.ALIGN_CENTER, null));
+            byeChart.AddCell(iTextSharpHelper.CreateCell("17 = 15", byeChartFont, 0, Element.ALIGN_CENTER, null));
+            byeChart.AddCell(iTextSharpHelper.CreateCell("18 = 14", byeChartFont, 0, Element.ALIGN_CENTER, null));
+            return byeChart;
+        }
+
         private void fillAttendByRankTable(ILookup<int, CompetitorDivision> competitorDivisions, PdfPTable table)
         {
             foreach (IGrouping<int, CompetitorDivision> division in competitorDivisions)
@@ -398,19 +469,19 @@ namespace WKSATournament.Controllers
             16 = 0
             17 = 15
             18 = 14*/
-            if (competitorCount != 0)
+            if (competitorCount > 2)
             {
                 List<int> power2 = new List<int>();
 
-                power2.Add(128);
-                power2.Add(64);
-                power2.Add(32);
-                power2.Add(16);
-                power2.Add(8);
-                power2.Add(4);
                 power2.Add(2);
+                power2.Add(4);
+                power2.Add(8);
+                power2.Add(16);
+                power2.Add(32);
+                power2.Add(64);
+                power2.Add(128);
 
-                return competitorCount - power2.First(m => m < competitorCount);
+                return power2.First(m => m >= competitorCount) - competitorCount;
             }
             else
             {
@@ -435,7 +506,7 @@ namespace WKSATournament.Controllers
         private void InitDocument()
         {
             document.SetPageSize(PageSize.A4);
-
+            //document.SetMargins(27f, 27f, 27f, 27f);
             PDFWriter = PdfWriter.GetInstance(document, ms);
             PDFWriter.ViewerPreferences = PdfWriter.PageLayoutSinglePage;
 

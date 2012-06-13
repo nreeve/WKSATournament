@@ -75,3 +75,4 @@ C:\Users\nreeve\WKSATournament\WKSATournament\obj\Debug\ResolveAssemblyReference
 C:\Users\nreeve\WKSATournament\WKSATournament\obj\Debug\WKSATournament.dll
 C:\Users\nreeve\WKSATournament\WKSATournament\obj\Debug\WKSATournament.pdb
 C:\Users\nreeve\WKSATournament\WKSATournament\bin\Lib.Web.Mvc.xml
+C:\Users\nreeve\Documents\Visual Studio 2010\Projects\WKSATournament\WKSATournament\bin\Lib.Web.Mvc.xml

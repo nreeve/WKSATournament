@@ -1,0 +1,57 @@
+﻿@model IEnumerable<WKSADB.Division>
+
+@{
+    ViewBag.Title = "Divisions Home";
+}
+
+<h2>Divisions Home</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.DivisionName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DivisionType.Description)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Rank.Description)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AgeGroup.AgeGroupId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Gender)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.DivisionName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DivisionType.Description)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Rank.Description)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.AgeGroup.Description)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Gender)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.DivisionId }) |
+            @Html.ActionLink("Details", "Details", new { id=item.DivisionId }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.DivisionId })
+        </td>
+    </tr>
+}
+
+</table>

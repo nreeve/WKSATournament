@@ -1,0 +1,37 @@
+﻿@model IEnumerable<WKSADB.TournamentDivision>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+@section featured {
+    @Html.Partial("TournamentStats", (TournamentStats)ViewBag.TournamentStats)
+}
+
+<article>
+<h2>Divisions</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table>
+    <tr>
+        <th align="left">Division Name</th>
+        <th>@Html.DisplayNameFor(model => model.IsCompleted)</th>
+        <th>@Html.DisplayNameFor(model => model.MedalsReceived)</th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model.OrderBy(m => m.Division.RankId).ThenBy(m => m.Division.DivisionTypeId).ThenBy(m => m.Division.AgeGroup.FromAge).ThenBy(m => m.Division.AgeGroup.ToAge))
+{
+    <tr>
+        <td>@Html.ActionLink(item.Division.DivisionName, "Edit", "TournamentDivision", new { id = item.TournamentId, DivisionId = item.DivisionId}, null)</td>
+        <td>@Html.DisplayFor(modelItem => item.IsCompleted)</td>
+        <td>@Html.DisplayFor(modelItem => item.MedalsReceived)</td>
+        <td>
+            @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+        </td>
+    </tr>
+}
+
+</table>

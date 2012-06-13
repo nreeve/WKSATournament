@@ -29,9 +29,6 @@ namespace WKSATournament.Controllers
             return View(divisions.OrderBy(m => m.RankId).ThenBy(m => m.DivisionTypeId).ThenBy(m => m.AgeGroup.FromAge).ThenBy(m => m.AgeGroup.ToAge).ToList());
         }
 
-        //
-        // GET: /Division/Details/5
-
         public ActionResult Details(int id = 0)
         {
             Division division = db.Divisions.Single(d => d.DivisionId == id);
@@ -42,38 +39,12 @@ namespace WKSATournament.Controllers
             return View(division);
         }
 
-        //
-        // GET: /Division/Create
-
         public ActionResult Create()
         {
-            ViewBag.AgeGroupId = new SelectList(db.AgeGroups.OrderBy(m => m.FromAge ?? m.ToAge).ThenBy(m => m.ToAge ?? m.FromAge), "AgeGroupId", "Description");
-            ViewBag.DivisionTypeId = new SelectList(db.DivisionTypes, "DivisionTypeId", "Description");
-            ViewBag.RankId = new SelectList(db.Ranks, "RankId", "Description");
-            ViewBag.Gender = new SelectList(new[]
-            {
-                new
-                {
-                    Name = "N/A",
-                    Value = string.Empty
-                },
-                new
-                {
-                    Name = "Men's",
-                    Value = "M"
-                },
-                new
-                {
-                    Name = "Women's",
-                    Value = "F"
-                }
-            }, "Value", "Name");
+            initViewBag(new Division());
 
-            return View();
+            return View("Edit");
         }
-
-        //
-        // POST: /Division/Create
 
         [HttpPost]
         public ActionResult Create(Division division)
@@ -84,10 +55,11 @@ namespace WKSATournament.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
+            else
+            {
+                initViewBag(new Division());
+            }
 
-            ViewBag.AgeGroupId = new SelectList(db.AgeGroups.OrderBy(m => m.FromAge).ThenBy(m => m.ToAge), "AgeGroupId", "Description", division.AgeGroupId);
-            ViewBag.DivisionTypeId = new SelectList(db.DivisionTypes, "DivisionTypeId", "Description", division.DivisionTypeId);
-            ViewBag.RankId = new SelectList(db.Ranks, "RankId", "Description", division.RankId);
             return View(division);
         }
 
@@ -117,26 +89,40 @@ namespace WKSATournament.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.AgeGroupId = new SelectList(db.AgeGroups.OrderBy(m => m.FromAge).ThenBy(m => m.ToAge), "AgeGroupId", "Description", division.AgeGroupId);
-            ViewBag.DivisionTypeId = new SelectList(db.DivisionTypes, "DivisionTypeId", "Description", division.DivisionTypeId);
-            ViewBag.RankId = new SelectList(db.Ranks, "RankId", "Description", division.RankId);
+
+            initViewBag(division);
+
             return View(division);
         }
 
-        //TODO: Add total to results and make it searchable with >, <
         [HttpPost]
         public ActionResult Edit(Division division)
         {
             if (ModelState.IsValid)
             {
                 db.Divisions.Attach(division);
+
+                if (division.IsOlympicDivision)
+                {
+                    division.OlympicDivisionSteps.Clear();
+                    foreach (OlympicDivisionStep olympicDivisionStep in division.OlympicSteps)
+                    {
+                        if (!string.IsNullOrWhiteSpace(olympicDivisionStep.Description) && olympicDivisionStep.BaseValue != 0)
+                        {
+                            division.OlympicDivisionSteps.Add(olympicDivisionStep);
+                        }
+                    }
+                }
+                
                 db.ObjectStateManager.ChangeObjectState(division, EntityState.Modified);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.AgeGroupId = new SelectList(db.AgeGroups, "AgeGroupId", "AgeGroupId", division.AgeGroupId);
-            ViewBag.DivisionTypeId = new SelectList(db.DivisionTypes, "DivisionTypeId", "Description", division.DivisionTypeId);
-            ViewBag.RankId = new SelectList(db.Ranks, "RankId", "Description", division.RankId);
+            else
+            {
+                initViewBag(division);
+            }
+
             return View(division);
         }
 
@@ -169,6 +155,31 @@ namespace WKSATournament.Controllers
         {
             db.Dispose();
             base.Dispose(disposing);
+        }
+
+        private void initViewBag(Division division)
+        {
+            ViewBag.AgeGroupId = new SelectList(db.AgeGroups.OrderBy(m => m.FromAge ?? m.ToAge).ThenBy(m => m.ToAge ?? m.FromAge), "AgeGroupId", "Description", division.AgeGroupId);
+            ViewBag.DivisionTypeId = new SelectList(db.DivisionTypes, "DivisionTypeId", "Description", division.DivisionTypeId);
+            ViewBag.RankId = new SelectList(db.Ranks, "RankId", "Description", division.RankId);
+            ViewBag.Gender = new SelectList(new[]
+            {
+                new
+                {
+                    Name = "N/A",
+                    Value = string.Empty
+                },
+                new
+                {
+                    Name = "Men's",
+                    Value = "M"
+                },
+                new
+                {
+                    Name = "Women's",
+                    Value = "F"
+                }
+            }, "Value", "Name", division.Gender);
         }
     }
 }

@@ -1,0 +1,53 @@
+﻿@model WKSADB.GrandChampion
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<fieldset>
+    <legend>GrandChampion</legend>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.Description)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Description)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.Rank.Description)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Rank.Description)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.AgeGroup.Description)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.AgeGroup.Description)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.Gender)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Gender)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.DivisionCount)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.DivisionCount)
+    </div>
+</fieldset>
+@using (Html.BeginForm()) {
+    <p>
+        <input type="submit" value="Delete" /> |
+        @Html.ActionLink("Back to List", "Index")
+    </p>
+}

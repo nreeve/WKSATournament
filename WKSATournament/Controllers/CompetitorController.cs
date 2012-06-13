@@ -30,6 +30,8 @@ namespace WKSATournament.Controllers
                 competitor.RankId = competitor.Student.RankId;
                 //competitor.AgeGroupId = db.AgeGroups.Single(m => !m.IsSparringGroup && (!m.FromAge.HasValue || m.FromAge <= competitor.Age) && (!m.ToAge.HasValue || m.ToAge >= competitor.Age)).AgeGroupId;
 
+                populateAddress(competitor, competitor);
+
                 foreach (CompetitorDivision competitorDivision in competitor.Divisions.Where(m => m.DivisionId != 0))
                 {
                     competitor.CompetitorDivisions.Add(competitorDivision);
@@ -48,7 +50,7 @@ namespace WKSATournament.Controllers
                 //TODO: Catch errors and display on page (test by using duplicate BBID)
                 db.SaveChanges();
                 //TODO: Add something to the querystring to select the competitors tab
-                return RedirectToAction("Details", "Tournament", new { id = competitor.TournamentId });
+                return RedirectToAction("Create", new { tournamentId = competitor.TournamentId });
             }
 
             ViewBag.StudentId = new SelectList(db.Students, "StudentId", "WKSAId", competitor.StudentId);
@@ -113,6 +115,9 @@ namespace WKSATournament.Controllers
                 competitorToSave.Age = competitor.Age;
                 competitorToSave.RankId = competitor.Student.RankId;
                 competitorToSave.Fee = competitor.Fee;
+                competitorToSave.ShareContactDetails = competitor.ShareContactDetails;
+
+                populateAddress(competitor, competitorToSave);
 
                 competitorToSave.Student.WKSAId = competitor.Student.WKSAId;
                 competitorToSave.Student.BlackBeltId = competitor.Student.BlackBeltId;
@@ -173,11 +178,32 @@ namespace WKSATournament.Controllers
                             {
                                 competitors = competitors.Where(m => m.Student.RankId == searchValue);
                             }
+                            else if (searchingFilter.SearchingName.Contains(WKSADBConstants.TotalPoints))
+                            {
+                                competitors = competitors.Where(m => m.CompetitorDivisions.Sum(cd => cd.Result) == searchValue);
+                            }
+                        }
+                        else if (searchingFilter.SearchingName.Contains(WKSADBConstants.TotalPoints))
+                        {
+                            if (searchingFilter.SearchingValue.Contains(">"))
+                            {
+                                if (Int32.TryParse(searchingFilter.SearchingValue.Replace(">",""), out searchValue))
+                                {
+                                    competitors = competitors.Where(m => m.CompetitorDivisions.Sum(cd => cd.Result) > searchValue);
+                                }
+                            }
+                            else if (searchingFilter.SearchingValue.Contains("<"))
+                            {
+                                if (Int32.TryParse(searchingFilter.SearchingValue.Replace("<", ""), out searchValue))
+                                {
+                                    competitors = competitors.Where(m => m.CompetitorDivisions.Sum(cd => cd.Result.HasValue ? cd.Result : 0) < searchValue);
+                                }
+                            }
                         }
                     }
                 }
             }
-
+            
             int totalRecords = competitors.Count();
 
             //Prepare JqGridData instance
@@ -200,7 +226,9 @@ namespace WKSATournament.Controllers
                     competitor.Student.FirstName,
                     competitor.Student.LastName,
                     competitor.Student.Rank.Description,
-                    competitor.Student.School.SchoolName
+                    competitor.Student.School.SchoolName,
+                    competitor.Age,
+                    competitor.CompetitorDivisions.Sum(m => m.Result)
                 }));
             }
 
@@ -215,7 +243,7 @@ namespace WKSATournament.Controllers
             {
                 GrandChampion grandChampion = db.GrandChampions.Single(m => m.RankId == competitor.RankId && (!m.FromAge.HasValue || m.FromAge <= competitor.Age) && (!m.ToAge.HasValue || m.ToAge >= competitor.Age) && (string.IsNullOrEmpty(m.Gender) || m.Gender.Equals(competitor.Student.Gender)));
 
-                if (competitor.CompetitorDivisions.Count == grandChampion.DivisionCount)
+                if (competitor.CompetitorDivisions.Count >= grandChampion.DivisionCount)
                 {
                     competitor.GrandChampionId = grandChampion.GrandChampionId;
                 }
@@ -230,9 +258,9 @@ namespace WKSATournament.Controllers
 
         private void InitViewBag(int tournamentId)
         {
-            ViewBag.CountryId = new SelectList(db.Countries, "CountryId", "CountryName");
+            ViewBag.CountryList = db.Countries;
             ViewBag.RankId = new SelectList(db.Ranks, "RankId", "Description");
-            ViewBag.SchoolId = new SelectList(db.Schools, "SchoolId", "FullName");
+            ViewBag.SchoolId = new SelectList(db.Schools.OrderBy(m => m.SchoolName), "SchoolId", "FullName");
             ViewBag.DivisionTypes = db.DivisionTypes.ToList();
             ViewBag.TournamentId = tournamentId;
 
@@ -240,6 +268,33 @@ namespace WKSATournament.Controllers
             ViewBag.TournamentStartDate = tournament.StartDate;
 
             GetTournamentStats(tournament);
+        }
+
+        private void populateAddress(Competitor source, Competitor destination)
+        {
+            if (source.ShareContactDetails)
+            {
+                if (destination.CompetitorDetail == null)
+                {
+                    destination.CompetitorDetail = new CompetitorDetail();
+                }
+
+                destination.CompetitorDetail.Address1 = source.Address1;
+                destination.CompetitorDetail.Address2 = source.Address2;
+                destination.CompetitorDetail.Address3 = source.Address3;
+                destination.CompetitorDetail.Address4 = source.Address4;
+                destination.CompetitorDetail.Address5 = source.Address5;
+                destination.CompetitorDetail.Postcode = source.Postcode;
+                destination.CompetitorDetail.CountryId = source.CountryId;
+            }
+
+            destination.Student.Address1 = source.Address1;
+            destination.Student.Address2 = source.Address2;
+            destination.Student.Address3 = source.Address3;
+            destination.Student.Address4 = source.Address4;
+            destination.Student.Address5 = source.Address5;
+            destination.Student.Postcode = source.Postcode;
+            destination.Student.CountryId = source.CountryId;
         }
     }
 }

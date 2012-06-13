@@ -1,0 +1,36 @@
+﻿@model WKSADB.Competitor
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<fieldset>
+    <legend>Competitor</legend>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.Tournament.TournamentName)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Tournament.TournamentName)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.Student.WKSAId)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Student.WKSAId)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.Fee)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Fee)
+    </div>
+</fieldset>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id=Model.CompetitorId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

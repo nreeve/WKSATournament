@@ -6,6 +6,8 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using WKSADB;
+using WKSATournament.Extensions;
+using Lib.Web.Mvc.JQuery.JqGrid;
 
 namespace WKSATournament.Controllers
 {
@@ -22,23 +24,26 @@ namespace WKSATournament.Controllers
         public string SchoolName { get; set; }
         public string DateOfBirth { get; set; }
         public string Gender { get; set; }
+        public string Address1 { get; set; }
+        public string Address2 { get; set; }
+        public string Address3 { get; set; }
+        public string Address4 { get; set; }
+        public string Address5 { get; set; }
+        public string Postcode { get; set; }
+        public int? CountryId { get; set; }
     }
-    
+
     public class StudentController : Controller
     {
         private WKSAEntities db = new WKSAEntities();
 
-        //
-        // GET: /Student/
-
         public ActionResult Index()
         {
-            var students = db.Students.Include("Country").Include("Rank").Include("School");
-            return View(students.ToList());
-        }
+            ViewBag.RankFilter = db.Ranks.CreateJQGridFilter(WKSADBConstants.RankId, WKSADBConstants.Description);
+            ViewBag.SchoolFilter = db.Schools.OrderBy(m => m.SchoolName).CreateJQGridFilter(WKSADBConstants.SchoolId, WKSADBConstants.SchoolName);
 
-        //
-        // GET: /Student/Details/5
+            return View();
+        }
 
         public ActionResult Details(int id = 0)
         {
@@ -50,9 +55,6 @@ namespace WKSATournament.Controllers
             return View(student);
         }
 
-        //
-        // GET: /Student/Create
-
         public ActionResult Create()
         {
             ViewBag.CountryId = new SelectList(db.Countries, "CountryId", "CountryName");
@@ -60,9 +62,6 @@ namespace WKSATournament.Controllers
             ViewBag.SchoolId = new SelectList(db.Schools, "SchoolId", "SchoolCode");
             return View();
         }
-
-        //
-        // POST: /Student/Create
 
         [HttpPost]
         public ActionResult Create(Student student)
@@ -129,7 +128,14 @@ namespace WKSATournament.Controllers
                         SchoolCode = student.School.SchoolCode,
                         SchoolName = student.School.SchoolName,
                         Gender = student.Gender,
-                        DateOfBirth = student.DateOfBirth.HasValue ? student.DateOfBirth.Value.ToString("dd/MM/yyyy") : null
+                        DateOfBirth = student.DateOfBirth.HasValue ? student.DateOfBirth.Value.ToString("dd/MM/yyyy") : null,
+                        Address1 = student.Address1,
+                        Address2 = student.Address2,
+                        Address3 = student.Address3,
+                        Address4 = student.Address4,
+                        Address5 = student.Address5,
+                        Postcode = student.Postcode,
+                        CountryId = student.CountryId
                     }).OrderBy(m => m.FirstName).ThenBy(m => m.LastName).ThenBy(m => m.SchoolName), JsonRequestBehavior.AllowGet);
             }
             else
@@ -138,9 +144,8 @@ namespace WKSATournament.Controllers
             }
         }
         
-        //
-        // GET: /Student/Edit/5
-
+        //TODO: Create and Edit need the same view. Maybe could be used as a partial that could go into the Competitor page
+        //TODO: Needs an option for 'Tournament History'
         public ActionResult Edit(int id = 0)
         {
             Student student = db.Students.Single(s => s.StudentId == id);
@@ -196,6 +201,77 @@ namespace WKSATournament.Controllers
             db.Students.DeleteObject(student);
             db.SaveChanges();
             return RedirectToAction("Index");
+        }
+
+        [AcceptVerbs(HttpVerbs.Post)]
+        public ActionResult GridData(JqGridRequest request)
+        {
+            IQueryable<Student> students = db.Students.OrderBy(m => m.FirstName).ThenBy(m => m.LastName);
+
+            if (request.Searching)
+            {
+                foreach (JqGridRequestSearchingFilter searchingFilter in request.SearchingFilters.Filters)
+                {
+                    // No idea why I have to assign this to a string var first. Doesn't work otherwise!?!
+                    string searchText = searchingFilter.SearchingValue;
+
+                    if (searchingFilter.SearchingName.Contains(WKSADBConstants.FirstName))
+                    {
+                        students = students.Where(m => m.FirstName.Contains(searchText));
+                    }
+                    else if (searchingFilter.SearchingName.Contains(WKSADBConstants.LastName))
+                    {
+                        students = students.Where(m => m.LastName.Contains(searchText));
+                    }
+                    else
+                    {
+                        int searchValue;
+
+                        if (Int32.TryParse(searchingFilter.SearchingValue, out searchValue))
+                        {
+                            if (searchingFilter.SearchingName.Contains(WKSADBConstants.SchoolName))
+                            {
+                                students = students.Where(m => m.SchoolId == searchValue);
+                            }
+                            else if (searchingFilter.SearchingName.Contains(WKSADBConstants.RankId))
+                            {
+                                students = students.Where(m => m.RankId == searchValue);
+                            }
+                        }
+                    }
+                }
+            }
+
+            int totalRecords = students.Count();
+
+            //Prepare JqGridData instance
+            JqGridResponse response = new JqGridResponse()
+            {
+                //Total pages count
+                TotalPagesCount = (int)Math.Ceiling((float)totalRecords / (float)request.RecordsCount),
+                //Page number
+                PageIndex = request.PageIndex,
+                //Total records count
+                TotalRecordsCount = totalRecords
+            };
+
+            //Table with rows data
+            foreach (Student student in students.OrderBy(request.SortingName + " " + request.SortingOrder.ToString()).Skip(request.PageIndex * request.RecordsCount).Take(request.PagesCount.HasValue ? request.PagesCount.Value : 1 * request.RecordsCount))
+            {
+                response.Records.Add(new JqGridRecord(Convert.ToString(student.StudentId), new List<object>()
+                {
+                    student.StudentId,
+                    student.WKSAId,
+                    student.BlackBeltId,
+                    student.FirstName,
+                    student.LastName,
+                    student.Rank.Description,
+                    student.School.SchoolName
+                }));
+            }
+
+            //Return data as json
+            return new JqGridJsonResult() { Data = response };
         }
 
         protected override void Dispose(bool disposing)

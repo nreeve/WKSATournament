@@ -13,7 +13,6 @@ using WKSATournament.Models;
 namespace WKSATournament.Controllers
 {
     //TODO: Look into SignalR for handheld app
-    //TODO: All pages to do with a tournament need a header like in the main home page that shows stats for the tournament: total competitors, divisions completed/medals given (e.g. 18/250)
     public class TournamentController : BaseController
     {
         private WKSAEntities db = new WKSAEntities();
@@ -72,7 +71,6 @@ namespace WKSATournament.Controllers
         }
 
         //TODO: Reports needed (grand champions, statistics etc)
-        //TODO: Header needs a way of getting back to details page
         public ActionResult Details(int id = 0)
         {
             Tournament tournament = db.Tournaments.Single(t => t.TournamentId == id);
@@ -142,7 +140,10 @@ namespace WKSATournament.Controllers
 
         private void initViewBag(Tournament tournament)
         {
-            GetTournamentStats(tournament);
+            if (tournament.TournamentId != 0)
+            {
+                GetTournamentStats(tournament);
+            }
             ViewBag.DivisionList = db.Divisions.OrderBy(m => m.RankId).ThenBy(m => m.DivisionTypeId).ThenBy(m => m.AgeGroup.FromAge).ThenBy(m => m.AgeGroup.ToAge);
             ViewBag.VenueId = new SelectList(db.Venues, "VenueId", "VenueName", tournament.VenueId);
             ViewBag.GrandChampionList = db.GrandChampions.OrderBy(m => m.RankId);

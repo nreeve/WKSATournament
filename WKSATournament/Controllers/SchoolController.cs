@@ -6,6 +6,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using WKSADB;
+using WKSATournament.Extensions;
 using Lib.Web.Mvc.JQuery.JqGrid;
 
 namespace WKSATournament.Controllers
@@ -14,18 +15,14 @@ namespace WKSATournament.Controllers
     {
         private WKSAEntities db = new WKSAEntities();
 
-        //
-        // GET: /School/
-
         public ActionResult Index()
         {
-            var schools = db.Schools.Include("Country").Include("Student");
-            return View(schools.ToList());
+            ViewBag.CountryFilter = db.Countries.OrderBy(m => m.CountryName).CreateJQGridFilter(WKSADBConstants.CountryId, WKSADBConstants.CountryName);
+
+            return View();
         }
 
-        //
-        // GET: /School/Details/5
-
+        //TODO: School home page that has student list, access to performance report etc
         public ActionResult Details(int id = 0)
         {
             School school = db.Schools.Single(s => s.SchoolId == id);
@@ -125,8 +122,41 @@ namespace WKSATournament.Controllers
         [AcceptVerbs(HttpVerbs.Post)]
         public ActionResult GridData(JqGridRequest request, int id)
         {
-            //IQueryable<Competitor> competitors = db.Competitors.Where(m => m.TournamentId == id);
-            var schools = db.Competitors.Where(m => m.TournamentId == id).ToLookup(m => m.Student.SchoolId).OrderByDescending(m => m.Sum(c => c.CompetitorDivisions.Sum(cd => cd.Result)));
+            IOrderedEnumerable<IGrouping<int, Competitor>> schools = null;
+                
+            switch(request.SortingName)
+            {
+                case "CompetitorCount":
+                    if (request.SortingOrder.Equals(JqGridSortingOrders.Desc))
+                    {
+                        schools = db.Competitors.Where(m => m.TournamentId == id).ToLookup(m => m.Student.SchoolId).OrderBy(m => m.Count());
+                    }
+                    else
+                    {
+                        schools = db.Competitors.Where(m => m.TournamentId == id).ToLookup(m => m.Student.SchoolId).OrderByDescending(m => m.Count());
+                    }
+                    break;
+                case "Average":
+                    if (request.SortingOrder.Equals(JqGridSortingOrders.Desc))
+                    {
+                        schools = db.Competitors.Where(m => m.TournamentId == id).ToLookup(m => m.Student.SchoolId).OrderBy(m => m.Sum(c => c.CompetitorDivisions.Sum(cd => cd.Result)) / m.Count());
+                    }
+                    else
+                    {
+                        schools = db.Competitors.Where(m => m.TournamentId == id).ToLookup(m => m.Student.SchoolId).OrderByDescending(m => m.Sum(c => c.CompetitorDivisions.Sum(cd => cd.Result)) / m.Count());
+                    }
+                    break;
+                case "TotalPoints":
+                    if (request.SortingOrder.Equals(JqGridSortingOrders.Desc))
+                    {
+                        schools = db.Competitors.Where(m => m.TournamentId == id).ToLookup(m => m.Student.SchoolId).OrderByDescending(m => m.Sum(c => c.CompetitorDivisions.Sum(cd => cd.Result)));
+                    }
+                    else
+                    {
+                        schools = db.Competitors.Where(m => m.TournamentId == id).ToLookup(m => m.Student.SchoolId).OrderBy(m => m.Sum(c => c.CompetitorDivisions.Sum(cd => cd.Result)));
+                    }
+                    break;
+            }
 
             int totalRecords = schools.Count();
 
@@ -145,7 +175,9 @@ namespace WKSATournament.Controllers
             foreach (IGrouping<int, Competitor> schoolCompetitors in schools.Skip(request.PageIndex * request.RecordsCount).Take(request.PagesCount.HasValue ? request.PagesCount.Value : 1 * request.RecordsCount))
             {
                 School school = schoolCompetitors.First().Student.School;
-                string TotalPoints = schoolCompetitors.Sum(s => s.CompetitorDivisions.Sum(cd => cd.Result)).ToString();
+                int CompetitorCount = schoolCompetitors.Count();
+                int? TotalPoints = schoolCompetitors.Sum(s => s.CompetitorDivisions.Sum(cd => cd.Result));
+                decimal Average = TotalPoints.HasValue ? TotalPoints.Value / CompetitorCount : 0;
 
                 response.Records.Add(new JqGridRecord(Convert.ToString(school.SchoolId), new List<object>()
                 {
@@ -153,7 +185,78 @@ namespace WKSATournament.Controllers
                     school.SchoolCode,
                     school.SchoolName,
                     school.InstructorName,
-                    TotalPoints
+                    CompetitorCount.ToString(),
+                    Average.ToString("0.#"),
+                    TotalPoints.ToString()
+                }));
+            }
+
+            //Return data as json
+            return new JqGridJsonResult() { Data = response };
+        }
+
+        [AcceptVerbs(HttpVerbs.Post)]
+        public ActionResult HomePageGridData(JqGridRequest request)
+        {
+            IQueryable<School> schools = db.Schools.OrderBy(m => m.SchoolName);
+
+            if (request.Searching)
+            {
+                foreach (JqGridRequestSearchingFilter searchingFilter in request.SearchingFilters.Filters)
+                {
+                    // No idea why I have to assign this to a string var first. Doesn't work otherwise!?!
+                    string searchText = searchingFilter.SearchingValue;
+
+                    if (searchingFilter.SearchingName.Contains(WKSADBConstants.SchoolCode))
+                    {
+                        schools = schools.Where(m => m.SchoolCode.Contains(searchText));
+                    }
+                    else if (searchingFilter.SearchingName.Contains(WKSADBConstants.SchoolName))
+                    {
+                        schools = schools.Where(m => m.SchoolName.Contains(searchText));
+                    }
+                    else if (searchingFilter.SearchingName.Contains(WKSADBConstants.InstructorName))
+                    {
+                        schools = schools.Where(m => m.InstructorName.Contains(searchText));
+                    }
+                    else
+                    {
+                        int searchValue;
+
+                        if (Int32.TryParse(searchingFilter.SearchingValue, out searchValue))
+                        {
+                            if (searchingFilter.SearchingName.Contains(WKSADBConstants.CountryName))
+                            {
+                                schools = schools.Where(m => m.CountryId == searchValue);
+                            }
+                        }
+                    }
+                }
+            }
+
+            int totalRecords = schools.Count();
+
+            //Prepare JqGridData instance
+            JqGridResponse response = new JqGridResponse()
+            {
+                //Total pages count
+                TotalPagesCount = (int)Math.Ceiling((float)totalRecords / (float)request.RecordsCount),
+                //Page number
+                PageIndex = request.PageIndex,
+                //Total records count
+                TotalRecordsCount = totalRecords
+            };
+
+            //Table with rows data
+            foreach (School school in schools.OrderBy(request.SortingName + " " + request.SortingOrder.ToString()).Skip(request.PageIndex * request.RecordsCount).Take(request.PagesCount.HasValue ? request.PagesCount.Value : 1 * request.RecordsCount))
+            {
+                response.Records.Add(new JqGridRecord(Convert.ToString(school.SchoolId), new List<object>()
+                {
+                    school.SchoolId,
+                    school.SchoolCode,
+                    school.SchoolName,
+                    school.Country.CountryName,
+                    school.InstructorName
                 }));
             }
 

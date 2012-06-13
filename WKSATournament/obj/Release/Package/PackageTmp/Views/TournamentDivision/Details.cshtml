@@ -1,0 +1,29 @@
+﻿@model WKSADB.TournamentDivision
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<fieldset>
+    <legend>TournamentDivision</legend>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.IsCompleted)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.IsCompleted)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.MedalsReceived)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.MedalsReceived)
+    </div>
+</fieldset>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { /* id=Model.PrimaryKey */ }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

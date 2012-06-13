@@ -1,0 +1,50 @@
+﻿@model WKSADB.Division
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<fieldset>
+    <legend>Division</legend>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.DivisionName)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.DivisionName)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.DivisionType.Description)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.DivisionType.Description)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.Rank.Description)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Rank.Description)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.AgeGroup.AgeGroupId)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.AgeGroup.AgeGroupId)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.Gender)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Gender)
+    </div>
+</fieldset>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id=Model.DivisionId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

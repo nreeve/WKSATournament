@@ -1,0 +1,51 @@
+﻿@model IEnumerable<WKSADB.AgeGroup>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Description)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FromAge)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ToAge)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.IsSparringGroup)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Description)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.FromAge)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ToAge)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.IsSparringGroup)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.AgeGroupId }) |
+            @Html.ActionLink("Details", "Details", new { id=item.AgeGroupId }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.AgeGroupId })
+        </td>
+    </tr>
+}
+
+</table>

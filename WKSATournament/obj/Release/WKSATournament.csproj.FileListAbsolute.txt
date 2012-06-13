@@ -1,0 +1,78 @@
+C:\Users\nreeve\WKSATournament\WKSATournament\bin\WKSATournament.dll
+C:\Users\nreeve\WKSATournament\WKSATournament\bin\WKSATournament.pdb
+C:\Users\nreeve\WKSATournament\WKSATournament\bin\EntityFramework.dll
+C:\Users\nreeve\WKSATournament\WKSATournament\bin\Microsoft.Web.Infrastructure.dll
+C:\Users\nreeve\WKSATournament\WKSATournament\bin\System.Json.dll
+C:\Users\nreeve\WKSATournament\WKSATournament\bin\System.Net.Http.dll
+C:\Users\nreeve\WKSATournament\WKSATournament\bin\System.Net.Http.Formatting.dll
+C:\Users\nreeve\WKSATournament\WKSATournament\bin\System.Net.Http.WebRequest.dll
+C:\Users\nreeve\WKSATournament\WKSATournament\bin\System.Web.Helpers.dll
+C:\Users\nreeve\WKSATournament\WKSATournament\bin\System.Web.Http.Common.dll
+C:\Users\nreeve\WKSATournament\WKSATournament\bin\System.Web.Http.dll
+C:\Users\nreeve\WKSATournament\WKSATournament\bin\System.Web.Http.WebHost.dll
+C:\Users\nreeve\WKSATournament\WKSATournament\bin\System.Web.Mvc.dll
+C:\Users\nreeve\WKSATournament\WKSATournament\bin\System.Web.Optimization.dll
+C:\Users\nreeve\WKSATournament\WKSATournament\bin\System.Web.Providers.dll
+C:\Users\nreeve\WKSATournament\WKSATournament\bin\System.Web.Razor.dll
+C:\Users\nreeve\WKSATournament\WKSATournament\bin\System.Web.WebPages.Deployment.dll
+C:\Users\nreeve\WKSATournament\WKSATournament\bin\System.Web.WebPages.dll
+C:\Users\nreeve\WKSATournament\WKSATournament\bin\System.Web.WebPages.Razor.dll
+C:\Users\nreeve\WKSATournament\WKSATournament\bin\WKSADB.dll
+C:\Users\nreeve\WKSATournament\WKSATournament\bin\WKSADB.pdb
+C:\Users\nreeve\WKSATournament\WKSATournament\bin\EntityFramework.xml
+C:\Users\nreeve\WKSATournament\WKSATournament\bin\Lib.Web.Mvc.xml
+C:\Users\nreeve\WKSATournament\WKSATournament\bin\System.Json.xml
+C:\Users\nreeve\WKSATournament\WKSATournament\bin\System.Net.Http.xml
+C:\Users\nreeve\WKSATournament\WKSATournament\bin\System.Net.Http.Formatting.xml
+C:\Users\nreeve\WKSATournament\WKSATournament\bin\System.Net.Http.WebRequest.xml
+C:\Users\nreeve\WKSATournament\WKSATournament\bin\System.Web.Helpers.xml
+C:\Users\nreeve\WKSATournament\WKSATournament\bin\System.Web.Http.xml
+C:\Users\nreeve\WKSATournament\WKSATournament\bin\System.Web.Http.Common.xml
+C:\Users\nreeve\WKSATournament\WKSATournament\bin\System.Web.Http.WebHost.xml
+C:\Users\nreeve\WKSATournament\WKSATournament\bin\System.Web.Mvc.xml
+C:\Users\nreeve\WKSATournament\WKSATournament\bin\System.Web.Razor.xml
+C:\Users\nreeve\WKSATournament\WKSATournament\bin\System.Web.WebPages.xml
+C:\Users\nreeve\WKSATournament\WKSATournament\bin\System.Web.WebPages.Deployment.xml
+C:\Users\nreeve\WKSATournament\WKSATournament\bin\System.Web.WebPages.Razor.xml
+C:\Users\nreeve\WKSATournament\WKSATournament\obj\Release\ResolveAssemblyReference.cache
+C:\Users\nreeve\WKSATournament\WKSATournament\obj\Release\WKSATournament.dll
+C:\Users\nreeve\WKSATournament\WKSATournament\obj\Release\WKSATournament.pdb
+C:\Users\nreeve\Documents\Visual Studio 2010\Projects\WKSATournament\WKSATournament\bin\WKSATournament.dll
+C:\Users\nreeve\Documents\Visual Studio 2010\Projects\WKSATournament\WKSATournament\bin\WKSATournament.pdb
+C:\Users\nreeve\Documents\Visual Studio 2010\Projects\WKSATournament\WKSATournament\bin\EntityFramework.dll
+C:\Users\nreeve\Documents\Visual Studio 2010\Projects\WKSATournament\WKSATournament\bin\Microsoft.Web.Infrastructure.dll
+C:\Users\nreeve\Documents\Visual Studio 2010\Projects\WKSATournament\WKSATournament\bin\System.Json.dll
+C:\Users\nreeve\Documents\Visual Studio 2010\Projects\WKSATournament\WKSATournament\bin\System.Net.Http.dll
+C:\Users\nreeve\Documents\Visual Studio 2010\Projects\WKSATournament\WKSATournament\bin\System.Net.Http.Formatting.dll
+C:\Users\nreeve\Documents\Visual Studio 2010\Projects\WKSATournament\WKSATournament\bin\System.Net.Http.WebRequest.dll
+C:\Users\nreeve\Documents\Visual Studio 2010\Projects\WKSATournament\WKSATournament\bin\System.Web.Helpers.dll
+C:\Users\nreeve\Documents\Visual Studio 2010\Projects\WKSATournament\WKSATournament\bin\System.Web.Http.Common.dll
+C:\Users\nreeve\Documents\Visual Studio 2010\Projects\WKSATournament\WKSATournament\bin\System.Web.Http.dll
+C:\Users\nreeve\Documents\Visual Studio 2010\Projects\WKSATournament\WKSATournament\bin\System.Web.Http.WebHost.dll
+C:\Users\nreeve\Documents\Visual Studio 2010\Projects\WKSATournament\WKSATournament\bin\System.Web.Mvc.dll
+C:\Users\nreeve\Documents\Visual Studio 2010\Projects\WKSATournament\WKSATournament\bin\System.Web.Optimization.dll
+C:\Users\nreeve\Documents\Visual Studio 2010\Projects\WKSATournament\WKSATournament\bin\System.Web.Providers.dll
+C:\Users\nreeve\Documents\Visual Studio 2010\Projects\WKSATournament\WKSATournament\bin\System.Web.Razor.dll
+C:\Users\nreeve\Documents\Visual Studio 2010\Projects\WKSATournament\WKSATournament\bin\System.Web.WebPages.Deployment.dll
+C:\Users\nreeve\Documents\Visual Studio 2010\Projects\WKSATournament\WKSATournament\bin\System.Web.WebPages.dll
+C:\Users\nreeve\Documents\Visual Studio 2010\Projects\WKSATournament\WKSATournament\bin\System.Web.WebPages.Razor.dll
+C:\Users\nreeve\Documents\Visual Studio 2010\Projects\WKSATournament\WKSATournament\bin\WKSADB.dll
+C:\Users\nreeve\Documents\Visual Studio 2010\Projects\WKSATournament\WKSATournament\bin\WKSADB.pdb
+C:\Users\nreeve\Documents\Visual Studio 2010\Projects\WKSATournament\WKSATournament\bin\EntityFramework.xml
+C:\Users\nreeve\Documents\Visual Studio 2010\Projects\WKSATournament\WKSATournament\bin\Lib.Web.Mvc.xml
+C:\Users\nreeve\Documents\Visual Studio 2010\Projects\WKSATournament\WKSATournament\bin\System.Json.xml
+C:\Users\nreeve\Documents\Visual Studio 2010\Projects\WKSATournament\WKSATournament\bin\System.Net.Http.xml
+C:\Users\nreeve\Documents\Visual Studio 2010\Projects\WKSATournament\WKSATournament\bin\System.Net.Http.Formatting.xml
+C:\Users\nreeve\Documents\Visual Studio 2010\Projects\WKSATournament\WKSATournament\bin\System.Net.Http.WebRequest.xml
+C:\Users\nreeve\Documents\Visual Studio 2010\Projects\WKSATournament\WKSATournament\bin\System.Web.Helpers.xml
+C:\Users\nreeve\Documents\Visual Studio 2010\Projects\WKSATournament\WKSATournament\bin\System.Web.Http.xml
+C:\Users\nreeve\Documents\Visual Studio 2010\Projects\WKSATournament\WKSATournament\bin\System.Web.Http.Common.xml
+C:\Users\nreeve\Documents\Visual Studio 2010\Projects\WKSATournament\WKSATournament\bin\System.Web.Http.WebHost.xml
+C:\Users\nreeve\Documents\Visual Studio 2010\Projects\WKSATournament\WKSATournament\bin\System.Web.Mvc.xml
+C:\Users\nreeve\Documents\Visual Studio 2010\Projects\WKSATournament\WKSATournament\bin\System.Web.Razor.xml
+C:\Users\nreeve\Documents\Visual Studio 2010\Projects\WKSATournament\WKSATournament\bin\System.Web.WebPages.xml
+C:\Users\nreeve\Documents\Visual Studio 2010\Projects\WKSATournament\WKSATournament\bin\System.Web.WebPages.Deployment.xml
+C:\Users\nreeve\Documents\Visual Studio 2010\Projects\WKSATournament\WKSATournament\bin\System.Web.WebPages.Razor.xml
+C:\Users\nreeve\Documents\Visual Studio 2010\Projects\WKSATournament\WKSATournament\obj\Release\ResolveAssemblyReference.cache
+C:\Users\nreeve\Documents\Visual Studio 2010\Projects\WKSATournament\WKSATournament\obj\Release\WKSATournament.dll
+C:\Users\nreeve\Documents\Visual Studio 2010\Projects\WKSATournament\WKSATournament\obj\Release\WKSATournament.pdb

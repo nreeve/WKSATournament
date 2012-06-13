@@ -1,0 +1,182 @@
+﻿@model WKSADB.Tournament
+
+@{
+    string pageTitle = "Create Tournament";
+    if (Model != null)
+    {
+        pageTitle = "Edit Tournament";
+    }
+    ViewBag.Title = pageTitle;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section featured {
+    @Html.Partial("TournamentStats", (TournamentStats)ViewBag.TournamentStats)
+}
+
+<h2>@pageTitle</h2>
+
+<script type="text/javascript" src="@Url.Content("~/Scripts/jquery.validate.min.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/additional-methods.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jQuery.dualListBox-1.3.js")"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.date').datepicker({ dateFormat: "dd/mm/yy" });
+        $.configureBoxes({
+            box1View: 'DivisionIds',
+            box1Counter: 'DivisionCounter',
+            box2View: 'SelectedDivisionIds',
+            box2Counter: 'SelectedDivisionCounter',
+            to1: 'DivisionTo1',
+            to2: 'DivisionTo2',
+            sortBy: 'attr',
+            useFilters: false
+        });
+
+        $.configureBoxes({
+            box1View: 'GrandChampionIds',
+            box1Counter: 'GrandChampionCounter',
+            box2View: 'SelectedGrandChampionIds',
+            box2Counter: 'SelectedGrandChampionCounter',
+            to1: 'GrandChampionTo1',
+            to2: 'GrandChampionTo2',
+            sortBy: 'attr',
+            useFilters: false
+        });
+
+        addVenue = function (data) {
+            $('#VenueId')
+                 .append($("<option></option>")
+                 .attr("value", data.venueId)
+                 .text(data.venueName));
+
+            $('#VenueId').val(data.venueId);
+
+            $('#popupDialog').dialog('close');
+        };
+        
+        $("#addVenueLink").data("dialog-callback", addVenue);        
+
+        initDialogs(['#addVenueLink']);
+    });
+</script>
+
+@using (Html.BeginForm())
+{
+    @Html.ValidationSummary(true)
+
+    <fieldset>
+        <legend>Tournament</legend>
+
+        @Html.Hidden("TournamentId", Model == null ? 0 :Model.TournamentId)
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.TournamentName, "Tournament Name")
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.TournamentName)
+            @Html.ValidationMessageFor(model => model.TournamentName, "The Tournament Name field is required.")
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.VenueId, "Venue")
+        </div>
+        <div class="editor-field">
+            @Html.DropDownList("VenueId", string.Empty)
+            @Html.ActionLink("Add New Venue", "Create", "Venue", routeValues: null, htmlAttributes: new { id = "addVenueLink", data_dialog_title = "Add New Venue" })
+            @Html.ValidationMessageFor(model => model.VenueId)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.StartDate, "Start Date")
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.StartDate)
+            @Html.ValidationMessageFor(model => model.StartDate, "The Start Date field is required.")
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.EndDate, "End Date")
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.EndDate)
+            @Html.ValidationMessageFor(model => model.EndDate, "The End Date field is required.")
+        </div>
+
+        <div class="editor-label">
+            <label>Divisions</label>
+            @Html.ValidationMessageFor(model => model.SelectedDivisionIds, "Please select at least one division.")
+        </div>
+        <div class="eventSelector">
+            <div class="eventBox">
+                <select id="DivisionIds" multiple="multiple">
+                    @{int sortOrder = 1;}
+                    @foreach (Division division in ViewBag.DivisionList)
+                    {
+                        if(Model == null || !Model.TournamentDivisions.Any(m => m.DivisionId == division.DivisionId))
+                        {
+                            <option value="@division.DivisionId" sortOrder="@sortOrder">@division.DivisionName</option>
+                            sortOrder++;
+                        }
+                    }
+                </select>
+
+                <span id="DivisionCounter" class="countLabel"></span>
+
+            </div>
+
+            <div class="controls">
+                <button id="DivisionTo1" type="button"><</button>
+                <button id="DivisionTo2" type="button">></button>
+            </div>
+
+            <div class="eventBox">
+                @Html.ListBoxFor(model => model.SelectedDivisionIds, Model == null ? new SelectList("") : new SelectList(Model.TournamentDivisions.OrderBy(m => m.Division.RankId).ThenBy(m => m.Division.DivisionTypeId).ThenBy(m => m.Division.AgeGroup.FromAge).ThenBy(m => m.Division.AgeGroup.ToAge), "DivisionId", "Division.DivisionName"))
+
+                <span id="SelectedDivisionCounter" class="countLabel"></span>
+            </div>
+        </div>
+
+        <div class="editor-label">
+            <label>Grand Champions</label>
+        </div>
+        <div class="eventSelector">
+            <div class="eventBox">
+                <select id="GrandChampionIds" multiple="multiple">
+                    @{int grandChampionSortOrder = 1;}
+                    @foreach (GrandChampion grandChampion in ViewBag.GrandChampionList)
+                    {
+                        if (Model == null || !Model.GrandChampions.Any(m => m.GrandChampionId == grandChampion.GrandChampionId))
+                        {
+                            <option value="@grandChampion.GrandChampionId" sortOrder="@grandChampionSortOrder">@grandChampion.Description</option>
+                            grandChampionSortOrder++;
+                        }
+                    }
+                </select>
+
+                <span id="GrandChampionCounter" class="countLabel"></span>
+
+            </div>
+
+            <div class="controls">
+                <button id="GrandChampionTo1" type="button"><</button>
+                <button id="GrandChampionTo2" type="button">></button>
+            </div>
+
+            <div class="eventBox">
+                @Html.ListBoxFor(model => model.SelectedGrandChampionIds, Model == null ? new SelectList("") : new SelectList(Model.GrandChampions.OrderBy(m => m.RankId), "GrandChampionId", "Description"))
+
+                <span id="SelectedGrandChampionCounter" class="countLabel"></span>
+            </div>
+        </div>
+
+        <p style="float:left;clear:left;">
+            <input type="submit" value="Save" />
+        </p>
+    </fieldset>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>

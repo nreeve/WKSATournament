@@ -1,0 +1,30 @@
+﻿@model IEnumerable<WKSADB.Tournament>
+
+@{
+    ViewBag.Title = "Select Tournament";
+}
+
+<h2>Select Tournament</h2>
+<p>@Html.ActionLink("Create New Tournament", "Create")</p>
+<table>
+    <tr>
+        <th>Tournament Name</th>
+        <th>Venue</th>
+        <th>Start Date</th>
+        <th>End Date</th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>@Html.ActionLink(item.TournamentName, "Details", new { id = item.TournamentId })</td>
+        <td>@item.Venue.VenueName</td>
+        <td>@item.StartDate.ToShortDateString()</td>
+        <td>@item.EndDate.ToShortDateString()</td>
+        <td>
+            @Html.ActionLink("Edit Settings", "Edit", new { id = item.TournamentId }) |
+            @Html.ActionLink("Delete", "Delete", new { id = item.TournamentId })
+        </td>
+    </tr>
+}
+</table>

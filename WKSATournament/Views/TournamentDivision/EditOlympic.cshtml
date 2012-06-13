@@ -1,0 +1,191 @@
+﻿@model WKSADB.TournamentDivision
+
+@{
+    ViewBag.Title = Model.Division.DivisionName;
+}
+
+@section featured {
+    @Html.Partial("TournamentStats", (TournamentStats)ViewBag.TournamentStats)
+}
+
+<script src="@Url.Content("~/Scripts/jquery.validate.min.js")"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#tabs").tabs();
+
+        $("input:text:visible:first").focus();
+    });
+</script>
+
+@using (Html.BeginForm("Edit", "TournamentDivision"))
+{
+    @Html.ValidationSummary(true)
+
+    <fieldset>
+        <legend>TournamentDivision</legend>
+
+        @Html.HiddenFor(model => model.TournamentId)
+        @Html.HiddenFor(model => model.DivisionId)
+
+        <h2>@Model.Division.DivisionName</h2>
+
+        <h3>Division Judges:</h3>
+
+        <div id="judges">
+            <label>1.</label>
+            @Html.EditorFor(model => model.Judge1)
+            <label>2.</label>
+            @Html.EditorFor(model => model.Judge2)
+            <label>3.</label>
+            @Html.EditorFor(model => model.Judge3)
+            <label>4.</label>
+            @Html.EditorFor(model => model.Judge4)
+            <label>5.</label>
+            @Html.EditorFor(model => model.Judge5)
+        </div>
+
+        <div id="tabs" style="font-size:11px;width:700px;margin:20px 0 20px 0;">
+	        <ul>
+		        <li><a href="#tabs-1">Competitors</a></li>
+                <li><a href="#tabs-2">Individual Judges Scores</a></li>
+                <li><a href="#tabs-3">Individual Judges Ranking</a></li>
+	        </ul>
+
+	        <div id="tabs-1">
+                <p>Please select a competitor to enter their scores.</p>
+                <table>
+                    <tr>
+                        <th></th>
+                        <th align="left" style="width:200px;">Competitor Name</th>
+                        <th style="width:75px;">TE Score</th>
+                        <th style="width:75px;">HB Score</th>
+                        <th style="width:75px;">Total</th>
+                        <th style="width:50px;">Place</th>
+                    </tr>
+                @{
+                    int count = 1;
+
+                    foreach (CompetitorDivision competitor in (IEnumerable<CompetitorDivision>)ViewBag.Competitors)
+                    {
+                                    <tr>
+                                        <td>@count.</td>
+                                        <td>@Html.ActionLink(string.Format("{0} {1}", competitor.Competitor.Student.FirstName, competitor.Competitor.Student.LastName), "EditOlympicCompetitor", new { competitorId = competitor.CompetitorId, divisionId = Model.DivisionId })</td>
+                                        <td align="center">@competitor.TechnicalScore</td>
+                                        <td align="center">@competitor.HyungBupScore</td>
+                                        <td align="center">@competitor.TotalScore</td>
+                                        <td align="center">
+                                            @Html.Hidden("competitors.Index", competitor.CompetitorId)
+                                            @Html.Hidden("competitors[" + competitor.CompetitorId + "].CompetitorId", competitor.CompetitorId)
+                                            @Html.Hidden("competitors[" + competitor.CompetitorId + "].DivisionId", competitor.DivisionId)
+                                            @Html.Hidden("competitors[" + competitor.CompetitorId + "].TechnicalScore", competitor.TechnicalScore)
+                                            @Html.Hidden("competitors[" + competitor.CompetitorId + "].HyungBupScore", competitor.HyungBupScore)
+                                            @Html.Hidden("competitors[" + competitor.CompetitorId + "].TotalScore", competitor.TotalScore)
+                                            @Html.TextBox("competitors[" + competitor.CompetitorId + "].Result", competitor.Result, new { @class = "resultTextBox" })
+                                            @Html.ValidationMessage("competitors[" + competitor.CompetitorId + "].Result")
+                                        </td>
+                                    </tr>
+            
+                        count++;
+                    }
+                }
+
+                </table>
+            </div>
+
+	        <div id="tabs-2">
+                <h3>Individual Judges Scores</h3>
+
+                <table>
+                    <tr>
+                        <th></th>
+                        <th align="left" style="width:300px;">Competitor Name</th>
+                        <th>Judge 1</th>
+                        <th>Judge 2</th>
+                        <th>Judge 3</th>
+                        <th>Judge 4</th>
+                        <th>Judge 5</th>
+                    </tr>
+                @{
+                    count = 1;
+
+                    foreach (CompetitorDivision competitor in (IEnumerable<CompetitorDivision>)ViewBag.Competitors)
+                    {
+                                    <tr>
+                                        <td>@count.</td>
+                                        <td>@Html.ActionLink(string.Format("{0}, {1}", competitor.Competitor.Student.LastName, competitor.Competitor.Student.FirstName), "EditOlympicCompetitor", new { competitorId = competitor.CompetitorId, divisionId = Model.DivisionId })</td>
+                                        <td>@(competitor.Judge1.HasValue ? @competitor.Judge1.Value.ToString("0.##") : "")</td>
+                                        <td>@(competitor.Judge2.HasValue ? @competitor.Judge2.Value.ToString("0.##") : "")</td>
+                                        <td>@(competitor.Judge3.HasValue ? @competitor.Judge3.Value.ToString("0.##") : "")</td>
+                                        <td>@(competitor.Judge4.HasValue ? @competitor.Judge4.Value.ToString("0.##") : "")</td>
+                                        <td>@(competitor.Judge5.HasValue ? @competitor.Judge5.Value.ToString("0.##") : "")</td>
+                                    </tr>
+            
+                        count++;
+                    }
+                }
+
+                </table>
+            </div>
+
+	        <div id="tabs-3">
+                <h3>Individual Judges Ranking</h3>
+
+                <table>
+                    <tr>
+                        <th></th>
+                        <th align="left" style="width:300px;">Competitor Name</th>
+                        <th>Judge 1</th>
+                        <th>Judge 2</th>
+                        <th>Judge 3</th>
+                        <th>Judge 4</th>
+                        <th>Judge 5</th>
+                    </tr>
+                @{
+                    count = 1;
+
+                    foreach (CompetitorDivision competitor in (IEnumerable<CompetitorDivision>)ViewBag.Competitors)
+                    {
+                                    <tr>
+                                        <td>@count.</td>
+                                        <td>@Html.ActionLink(string.Format("{0}, {1}", competitor.Competitor.Student.LastName, competitor.Competitor.Student.FirstName), "EditOlympicCompetitor", new { competitorId = competitor.CompetitorId, divisionId = Model.DivisionId })</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+            
+                        count++;
+                    }
+                }
+
+                </table>
+            </div>
+        </div>
+        <div style="clear:left;">
+            <div class="editor-label">
+                @Html.LabelFor(model => model.IsCompleted)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.IsCompleted)
+                @Html.ValidationMessageFor(model => model.IsCompleted)
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.MedalsReceived)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.MedalsReceived)
+                @Html.ValidationMessageFor(model => model.MedalsReceived)
+            </div>
+        </div>
+        <p>
+            <input type="submit" value="Save" />
+        </p>
+    </fieldset>
+}
+
+<div style="clear:left;">
+    @Html.ActionLink("Back to List", "Details", "Tournament", new { id = Model.TournamentId }, null)
+</div>

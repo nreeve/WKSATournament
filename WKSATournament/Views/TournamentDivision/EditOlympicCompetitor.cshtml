@@ -1,0 +1,281 @@
+﻿@model WKSADB.TournamentDivision
+
+@{
+    ViewBag.Title = Model.Division.DivisionName;
+    Competitor competitor = ViewBag.Competitor;
+    IEnumerable<HyungBup> hyungBupList = ViewBag.HyungBup;
+    int judge1TabIndex = 101;
+    int judge2TabIndex = 201;
+    int judge3TabIndex = 301;
+    int judge4TabIndex = 401;
+    int judge5TabIndex = 501;
+    int totalTabIndex = 601;
+}
+
+@section featured {
+    @Html.Partial("TournamentStats", (TournamentStats)ViewBag.TournamentStats)
+}
+
+<script src="@Url.Content("~/Scripts/jquery.validate.min.js")"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")"></script>
+<script type="text/javascript">
+    var stepCount = @Model.Division.OlympicDivisionSteps.Count();
+    var hyungBupCount = @hyungBupList.Count();
+
+    $(document).ready(function () {
+        $("input:text:visible:first").focus();
+
+        $("input:text").change(function () {
+            var start = this.id.indexOf("[");
+            var divisionStepId = this.id.substring(start + 1, this.id.indexOf("]"));
+            var itemName = "#" + this.id.substr(0, start) + "\\[" + divisionStepId + "\\]\\.";
+
+            var judges = new Array();
+
+            judges[0] = new Number($(itemName + "Judge1").val());
+            judges[1] = new Number($(itemName + "Judge2").val());
+            judges[2] = new Number($(itemName + "Judge3").val());
+
+            // Only use judges 4 and 5 if entered
+            if (!isNaN($(itemName + "Judge4").val()) && $(itemName + "Judge4").val() != "" && !isNaN($(itemName + "Judge5").val()) && $(itemName + "Judge5").val() != "") {
+                judges[3] = new Number($(itemName + "Judge4").val());
+                judges[4] = new Number($(itemName + "Judge5").val());
+            }
+            
+            var total = new Number();
+            $.each(judges, function(index, value){
+                total += value;
+            });
+            
+            // Remove highest and lowest values if all 5 judges
+            if (judges.length == 5) {
+                total = total - (Math.max.apply(Math, judges) + Math.min.apply(Math, judges));
+            }
+            total = total / 3;
+
+            if(itemName.indexOf("Step") != -1){
+                total = total + new Number($(itemName + "BaseValue").val());
+            }
+            
+            $(itemName + "Total").val(roundNumber(total, 2));
+            
+            calcTotals();
+        });
+
+        calcTotals();
+    });
+
+    function calcTotals(){
+        var technicalScoreVal = new Number();
+        var hyungBupScoreVal = new Number();
+        var maxTechnicalScoreBase = new Number();
+        var maxTechnicalScoreVal = new Number();
+        var hyungBupMultiplier = new Number();
+
+        var judge1Total = new Number();
+        var judge2Total = new Number();
+        var judge3Total = new Number();
+        var judge4Total = new Number();
+        var judge5Total = new Number();
+
+        for(i = 1;i<=stepCount;i++){
+            technicalScoreVal += new Number($("#OlympicDivisionSteps\\[" + i + "\\]\\.Total").val());
+            maxTechnicalScoreBase += new Number($("#OlympicDivisionSteps\\[" + i + "\\]\\.BaseValue").val());
+
+            judge1Total += new Number($("#OlympicDivisionSteps\\[" + i + "\\]\\.Judge1").val());
+            judge2Total += new Number($("#OlympicDivisionSteps\\[" + i + "\\]\\.Judge2").val());
+            judge3Total += new Number($("#OlympicDivisionSteps\\[" + i + "\\]\\.Judge3").val());
+            judge4Total += new Number($("#OlympicDivisionSteps\\[" + i + "\\]\\.Judge4").val());
+            judge5Total += new Number($("#OlympicDivisionSteps\\[" + i + "\\]\\.Judge5").val());
+        }
+
+        maxTechnicalScoreVal = maxTechnicalScoreBase + (stepCount*3);
+        hyungBupMultiplier = maxTechnicalScoreVal / 50;
+
+        for(i = 1;i<=hyungBupCount;i++){
+            hyungBupScoreVal += new Number($("#OlympicDivisionHyungBup\\[" + i + "\\]\\.Total").val());
+
+            judge1Total += new Number($("#OlympicDivisionHyungBup\\[" + i + "\\]\\.Judge1").val());
+            judge2Total += new Number($("#OlympicDivisionHyungBup\\[" + i + "\\]\\.Judge2").val());
+            judge3Total += new Number($("#OlympicDivisionHyungBup\\[" + i + "\\]\\.Judge3").val());
+            judge4Total += new Number($("#OlympicDivisionHyungBup\\[" + i + "\\]\\.Judge4").val());
+            judge5Total += new Number($("#OlympicDivisionHyungBup\\[" + i + "\\]\\.Judge5").val());
+        }
+        
+        hyungBupScoreVal = hyungBupScoreVal * hyungBupMultiplier;
+
+        judge1Total += maxTechnicalScoreBase;
+        judge2Total += maxTechnicalScoreBase;
+        judge3Total += maxTechnicalScoreBase;
+        judge4Total += maxTechnicalScoreBase;
+        judge5Total += maxTechnicalScoreBase;
+
+        $("#Judge1").val(judge1Total);
+        $("#Judge2").val(judge2Total);
+        $("#Judge3").val(judge3Total);
+        $("#Judge4").val(judge4Total);
+        $("#Judge5").val(judge5Total);
+
+        $("#hyungBupMultiplier").text(hyungBupMultiplier);
+        $("#maxTechnicalScore").text(maxTechnicalScoreVal);
+        $("#TechnicalScore").val(technicalScoreVal);
+        $("#HyungBupScore").val(hyungBupScoreVal);
+        $("#TotalScore").val(technicalScoreVal + hyungBupScoreVal);
+        $("#technicalScoreText").text(technicalScoreVal);
+        $("#hyungBupScoreText").text(hyungBupScoreVal);
+        $("#totalScoreText").text(technicalScoreVal + hyungBupScoreVal);
+    }
+
+    function roundNumber(num, dec) {
+        var result = Math.round(num * Math.pow(10, dec)) / Math.pow(10, dec);
+        return result;
+    }
+</script>
+
+<h2>@Model.Division.DivisionName - @competitor.Student.FirstName @competitor.Student.LastName</h2>
+@using (Html.BeginForm())
+{
+    @Html.ValidationSummary(true)
+
+    <fieldset>
+        <legend>TournamentDivision</legend>
+
+        @Html.Hidden("CompetitorId", competitor.CompetitorId)
+        @Html.Hidden("DivisionId", Model.DivisionId)
+        @Html.Hidden("TechnicalScore")
+        @Html.Hidden("HyungBupScore")
+        @Html.Hidden("TotalScore")
+
+        <table>
+            <tr>
+                <td>Hyung Bup Multiplier:</td>
+                <td><span id="hyungBupMultiplier"></span></td>
+            </tr>
+            <tr>
+                <td><b>Max Technical Score:</b></td>
+                <td><b><span id="maxTechnicalScore"></span></b></td>
+            </tr>
+        </table>
+
+        <table border="1" cellspacing="0" cellpadding="5" style="padding-top:20px;">
+            <tr>
+                <th></th>
+                <th>Value</th>
+                <th align="left" width="300px;">Technical Elements (-3 > 3)</th>
+                <th>@(string.IsNullOrWhiteSpace(Model.Judge1) ? "Judge 1" : Model.Judge1)</th>
+                <th>@(string.IsNullOrWhiteSpace(Model.Judge2) ? "Judge 2" : Model.Judge2)</th>
+                <th>@(string.IsNullOrWhiteSpace(Model.Judge3) ? "Judge 3" : Model.Judge3)</th>
+                <th>@(string.IsNullOrWhiteSpace(Model.Judge4) ? "Judge 4" : Model.Judge4)</th>
+                <th>@(string.IsNullOrWhiteSpace(Model.Judge5) ? "Judge 5" : Model.Judge5)</th>
+                <th>Total</th>
+            </tr>
+
+        @foreach (OlympicDivisionStep olympicDivisionStep in Model.Division.OlympicDivisionSteps)
+        {
+            CompetitorOlympicDivisionStep competitorOlympicDivisionStep = new CompetitorOlympicDivisionStep();
+            if (competitor.CompetitorOlympicDivisionSteps.Any(m => m.DivisionId == Model.DivisionId && m.DivisionStepId == olympicDivisionStep.DivisionStepId))
+            {
+                competitorOlympicDivisionStep = competitor.CompetitorOlympicDivisionSteps.Single(m => m.DivisionId == Model.DivisionId && m.DivisionStepId == olympicDivisionStep.DivisionStepId);
+            }
+            
+            <tr>
+                <td>
+                    <input type="hidden" id="OlympicDivisionSteps.Index" name="OlympicDivisionSteps.Index" value="@olympicDivisionStep.DivisionStepId" />
+                    <input type="hidden" id="OlympicDivisionSteps[@olympicDivisionStep.DivisionStepId].CompetitorId" name="OlympicDivisionSteps[@olympicDivisionStep.DivisionStepId].CompetitorId" value="@competitor.CompetitorId" />
+                    <input type="hidden" id="OlympicDivisionSteps[@olympicDivisionStep.DivisionStepId].DivisionId" name="OlympicDivisionSteps[@olympicDivisionStep.DivisionStepId].DivisionId" value="@olympicDivisionStep.DivisionId" />
+                    <input type="hidden" id="OlympicDivisionSteps[@olympicDivisionStep.DivisionStepId].DivisionStepId" name="OlympicDivisionSteps[@olympicDivisionStep.DivisionStepId].DivisionStepId" value="@olympicDivisionStep.DivisionStepId" />
+                    <input type="hidden" id="OlympicDivisionSteps[@olympicDivisionStep.DivisionStepId].BaseValue" name="OlympicDivisionSteps[@olympicDivisionStep.DivisionStepId].BaseValue" value="@olympicDivisionStep.BaseValue" />
+                    @olympicDivisionStep.DivisionStepId.
+                </td>
+                <td align="center">@olympicDivisionStep.BaseValue.ToString("0.#")</td>
+                <td>@olympicDivisionStep.Description</td>
+                <td align="center"><input type="text" id="OlympicDivisionSteps[@olympicDivisionStep.DivisionStepId].Judge1" name="OlympicDivisionSteps[@olympicDivisionStep.DivisionStepId].Judge1" class="resultTextBox" tabindex="@judge1TabIndex" value="@competitorOlympicDivisionStep.Judge1.ToString("0")" /></td>
+                <td align="center"><input type="text" id="OlympicDivisionSteps[@olympicDivisionStep.DivisionStepId].Judge2" name="OlympicDivisionSteps[@olympicDivisionStep.DivisionStepId].Judge2" class="resultTextBox" tabindex="@judge2TabIndex" value="@competitorOlympicDivisionStep.Judge2.ToString("0")" /></td>
+                <td align="center"><input type="text" id="OlympicDivisionSteps[@olympicDivisionStep.DivisionStepId].Judge3" name="OlympicDivisionSteps[@olympicDivisionStep.DivisionStepId].Judge3" class="resultTextBox" tabindex="@judge3TabIndex" value="@competitorOlympicDivisionStep.Judge3.ToString("0")" /></td>
+                <td align="center"><input type="text" id="OlympicDivisionSteps[@olympicDivisionStep.DivisionStepId].Judge4" name="OlympicDivisionSteps[@olympicDivisionStep.DivisionStepId].Judge4" class="resultTextBox" tabindex="@judge4TabIndex" value="@competitorOlympicDivisionStep.Judge4" /></td>
+                <td align="center"><input type="text" id="OlympicDivisionSteps[@olympicDivisionStep.DivisionStepId].Judge5" name="OlympicDivisionSteps[@olympicDivisionStep.DivisionStepId].Judge5" class="resultTextBox" tabindex="@judge5TabIndex" value="@competitorOlympicDivisionStep.Judge5" /></td>
+                <td align="center"><input type="text" id="OlympicDivisionSteps[@olympicDivisionStep.DivisionStepId].Total" readonly name="OlympicDivisionSteps[@olympicDivisionStep.DivisionStepId].Total" class="resultTextBoxTotal" tabindex="@totalTabIndex" value="@competitorOlympicDivisionStep.Total.ToString("0")" /></td>
+            </tr>
+            
+            judge1TabIndex++;
+            judge2TabIndex++;
+            judge3TabIndex++;
+            judge4TabIndex++;
+            judge5TabIndex++;
+            totalTabIndex++;
+        }
+
+            <tr>
+                <th colspan="9">Hyung Bub (0.25 > 10)</th>
+            </tr>
+
+        @foreach (HyungBup hyungBup in hyungBupList)
+        {
+            CompetitorOlympicDivisionHyungBup competitorOlympicDivisionHyungBup = new CompetitorOlympicDivisionHyungBup();
+            if (competitor.CompetitorOlympicDivisionHyungBups.Any(m => m.DivisionId == Model.DivisionId && m.HyungBupId == hyungBup.HyungBupId))
+            {
+                competitorOlympicDivisionHyungBup = competitor.CompetitorOlympicDivisionHyungBups.Single(m => m.DivisionId == Model.DivisionId && m.HyungBupId == hyungBup.HyungBupId);
+            }
+
+            <tr>
+                <td>@hyungBup.HyungBupId</td>
+                <td>
+                    <input type="hidden" id="OlympicDivisionHyungBup.Index" name="OlympicDivisionHyungBup.Index" value="@hyungBup.HyungBupId" />
+                    <input type="hidden" id="OlympicDivisionHyungBup[@hyungBup.HyungBupId].CompetitorId" name="OlympicDivisionHyungBup[@hyungBup.HyungBupId].CompetitorId" value="@competitor.CompetitorId" />
+                    <input type="hidden" id="OlympicDivisionHyungBup[@hyungBup.HyungBupId].DivisionId" name="OlympicDivisionHyungBup[@hyungBup.HyungBupId].DivisionId" value="@Model.DivisionId" />
+                    <input type="hidden" id="OlympicDivisionHyungBup[@hyungBup.HyungBupId].HyungBupId" name="OlympicDivisionHyungBup[@hyungBup.HyungBupId].HyungBupId" value="@hyungBup.HyungBupId" />
+                </td>
+                <td align="center">@hyungBup.Description</td>
+                <td align="center"><input type="text" id="OlympicDivisionHyungBup[@hyungBup.HyungBupId].Judge1" name="OlympicDivisionHyungBup[@hyungBup.HyungBupId].Judge1" class="resultTextBox" tabindex="@judge1TabIndex" value="@competitorOlympicDivisionHyungBup.Judge1.ToString("0.##")" /></td>
+                <td align="center"><input type="text" id="OlympicDivisionHyungBup[@hyungBup.HyungBupId].Judge2" name="OlympicDivisionHyungBup[@hyungBup.HyungBupId].Judge2" class="resultTextBox" tabindex="@judge2TabIndex" value="@competitorOlympicDivisionHyungBup.Judge2.ToString("0.##")" /></td>
+                <td align="center"><input type="text" id="OlympicDivisionHyungBup[@hyungBup.HyungBupId].Judge3" name="OlympicDivisionHyungBup[@hyungBup.HyungBupId].Judge3" class="resultTextBox" tabindex="@judge3TabIndex" value="@competitorOlympicDivisionHyungBup.Judge3.ToString("0.##")" /></td>
+                <td align="center"><input type="text" id="OlympicDivisionHyungBup[@hyungBup.HyungBupId].Judge4" name="OlympicDivisionHyungBup[@hyungBup.HyungBupId].Judge4" class="resultTextBox" tabindex="@judge4TabIndex" value="@(competitorOlympicDivisionHyungBup.Judge4.HasValue ? competitorOlympicDivisionHyungBup.Judge4.Value.ToString("0.##") : "")" /></td>
+                <td align="center"><input type="text" id="OlympicDivisionHyungBup[@hyungBup.HyungBupId].Judge5" name="OlympicDivisionHyungBup[@hyungBup.HyungBupId].Judge5" class="resultTextBox" tabindex="@judge5TabIndex" value="@(competitorOlympicDivisionHyungBup.Judge5.HasValue ? competitorOlympicDivisionHyungBup.Judge5.Value.ToString("0.##") : "")" /></td>
+                <td align="center"><input type="text" id="OlympicDivisionHyungBup[@hyungBup.HyungBupId].Total" name="OlympicDivisionHyungBup[@hyungBup.HyungBupId].Total" class="resultTextBoxTotal" tabindex="@totalTabIndex" value="@competitorOlympicDivisionHyungBup.Total.ToString("0.##")" /></td>
+            </tr>
+            
+            judge1TabIndex++;
+            judge2TabIndex++;
+            judge3TabIndex++;
+            judge4TabIndex++;
+            judge5TabIndex++;
+            totalTabIndex++;
+        }
+
+            <tr>
+                <th colspan="3">Judge Totals</th>
+                <td align="center"><input type="text" id="Judge1" name="Judge1" class="resultTextBoxTotal" readonly /></td>
+                <td align="center"><input type="text" id="Judge2" name="Judge2" class="resultTextBoxTotal" readonly /></td>
+                <td align="center"><input type="text" id="Judge3" name="Judge3" class="resultTextBoxTotal" readonly /></td>
+                <td align="center"><input type="text" id="Judge4" name="Judge4" class="resultTextBoxTotal" readonly /></td>
+                <td align="center"><input type="text" id="Judge5" name="Judge5" class="resultTextBoxTotal" readonly /></td>
+                <td></td>
+            </tr>
+        </table>
+
+        <table style="padding-top:20px;">
+            <tr>
+                <th colspan="2" align="left">Totals</th>
+            </tr>
+            <tr>
+                <td>Technical Score:</td>
+                <td><span id="technicalScoreText"></span></td>
+            </tr>
+            <tr>
+                <td>Hyung Bup Score:</td>
+                <td><span id="hyungBupScoreText"></span></td>
+            </tr>
+            <tr>
+                <td><b>Total Score:</b></td>
+                <td><b><span id="totalScoreText"></span></b></td>
+            </tr>
+        </table>
+        <p>
+            <input type="submit" value="Save" />
+        </p>
+    </fieldset>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Details", "Tournament", new { id = Model.TournamentId }, null)
+</div>
